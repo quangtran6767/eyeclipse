@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use anyhow::{Context, Result};
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
@@ -29,9 +31,7 @@ impl SelectionState {
         let y = self.start_y.min(self.current_y).max(0);
         let x2 = self.start_x.max(self.current_x).min(max_w as i16);
         let y2 = self.start_y.max(self.current_y).min(max_h as i16);
-        let w = (x2 - x).max(0) as u16;
-        let h = (y2 - y).max(0) as u16;
-        (x, y, w, h)
+        ((x), (y), (x2 - x).max(0) as u16, (y2 - y).max(0) as u16)
     }
 }
 
@@ -41,150 +41,94 @@ pub fn select_region() -> Result<Option<Region>> {
     let (conn, screen_num) = RustConnection::connect(None).context("Failed to connect to X11")?;
     let screen = &conn.setup().roots[screen_num];
     let root = screen.root;
-    let screen_width = screen.width_in_pixels;
-    let screen_height = screen.height_in_pixels;
+    let sw = screen.width_in_pixels;
+    let sh = screen.height_in_pixels;
+    let depth = screen.root_depth;
 
     // Capture the screen before showing overlay
     let bg_image = capture::capture_full_screen()?;
     let bg_rgba = bg_image.to_rgba8();
 
-    // Apply dark tint to background
-    let mut tinted = bg_rgba.clone();
+    // Upload pixmaps on the root drawable (before window exists)
+    let bg_pixmap = conn.generate_id()?;
+    conn.create_pixmap(depth, bg_pixmap, root, sw, sh)?;
+    let orig_pixmap = conn.generate_id()?;
+    conn.create_pixmap(depth, orig_pixmap, root, sw, sh)?;
+
+    let tmp_gc = conn.generate_id()?;
+    conn.create_gc(tmp_gc, root, &CreateGCAux::new())?;
+
+    // Upload original (un-tinted) first
+    upload_pixmap(&conn, &bg_rgba, orig_pixmap, tmp_gc, sw, sh, depth)?;
+
+    // Tint and upload as background
+    let mut tinted = bg_rgba;
     for pixel in tinted.pixels_mut() {
         pixel[0] = (pixel[0] as u16 * 120 / 255) as u8;
         pixel[1] = (pixel[1] as u16 * 120 / 255) as u8;
         pixel[2] = (pixel[2] as u16 * 120 / 255) as u8;
     }
+    upload_pixmap(&conn, &tinted, bg_pixmap, tmp_gc, sw, sh, depth)?;
+    drop(tinted);
+    conn.free_gc(tmp_gc)?;
 
-    // Create the overlay window
+    // Create window with bg_pixmap as background — X server paints it
+    // atomically on map, no black flash, no tearing on startup.
     let win = conn.generate_id()?;
-    let values = CreateWindowAux::new()
-        .background_pixel(screen.black_pixel)
-        .override_redirect(1)
-        .event_mask(
-            EventMask::EXPOSURE
-                | EventMask::BUTTON_PRESS
-                | EventMask::BUTTON_RELEASE
-                | EventMask::BUTTON_MOTION
-                | EventMask::POINTER_MOTION
-                | EventMask::KEY_PRESS,
-        );
-
     conn.create_window(
         COPY_DEPTH_FROM_PARENT,
         win,
         root,
         0,
         0,
-        screen_width,
-        screen_height,
+        sw,
+        sh,
         0,
         WindowClass::INPUT_OUTPUT,
         0,
-        &values,
+        &CreateWindowAux::new()
+            .background_pixmap(bg_pixmap)
+            .override_redirect(1)
+            .event_mask(
+                EventMask::EXPOSURE
+                    | EventMask::BUTTON_PRESS
+                    | EventMask::BUTTON_RELEASE
+                    | EventMask::BUTTON_MOTION
+                    | EventMask::POINTER_MOTION
+                    | EventMask::KEY_PRESS,
+            ),
     )?;
 
-    // Create GC for drawing
+    // GCs
     let gc = conn.generate_id()?;
     conn.create_gc(gc, win, &CreateGCAux::new())?;
 
-    // Create pixmap from tinted screenshot for background (persistent)
-    let bg_pixmap = conn.generate_id()?;
-    conn.create_pixmap(screen.root_depth, bg_pixmap, win, screen_width, screen_height)?;
+    let sel_gc = conn.generate_id()?;
+    conn.create_gc(
+        sel_gc,
+        win,
+        &CreateGCAux::new()
+            .foreground(screen.white_pixel)
+            .function(GX::XOR)
+            .line_width(2),
+    )?;
 
-    // Create a scratch pixmap for double-buffering (avoids tearing)
-    let scratch = conn.generate_id()?;
-    conn.create_pixmap(screen.root_depth, scratch, win, screen_width, screen_height)?;
-
-    // Convert RGBA to the X11 expected BGRA format
-    let mut bgra_data: Vec<u8> = Vec::with_capacity(tinted.len());
-    for pixel in tinted.pixels() {
-        bgra_data.push(pixel[2]); // B
-        bgra_data.push(pixel[1]); // G
-        bgra_data.push(pixel[0]); // R
-        bgra_data.push(pixel[3]); // A
-    }
-
-    // Also prepare the original (un-tinted) BGRA for the clear region
-    let mut orig_bgra_full: Vec<u8> = Vec::with_capacity(bg_rgba.len());
-    for pixel in bg_rgba.pixels() {
-        orig_bgra_full.push(pixel[2]);
-        orig_bgra_full.push(pixel[1]);
-        orig_bgra_full.push(pixel[0]);
-        orig_bgra_full.push(pixel[3]);
-    }
-
-    // Also create a pixmap for the original un-tinted image
-    let orig_pixmap = conn.generate_id()?;
-    conn.create_pixmap(screen.root_depth, orig_pixmap, win, screen_width, screen_height)?;
-
-    // Put the image data in chunks (X11 has request size limits)
-    let bytes_per_row = screen_width as usize * 4;
-    let max_rows_per_request = 8192;
-
-    // Upload tinted to bg_pixmap
-    let mut y_offset = 0u16;
-    while y_offset < screen_height {
-        let rows = max_rows_per_request.min((screen_height - y_offset) as usize);
-        let start = y_offset as usize * bytes_per_row;
-        let end = start + rows * bytes_per_row;
-        if end > bgra_data.len() {
-            break;
-        }
-        conn.put_image(
-            ImageFormat::Z_PIXMAP,
-            bg_pixmap,
-            gc,
-            screen_width,
-            rows as u16,
-            0,
-            y_offset as i16,
-            0,
-            screen.root_depth,
-            &bgra_data[start..end],
-        )?;
-        y_offset += rows as u16;
-    }
-
-    // Upload original to orig_pixmap
-    y_offset = 0;
-    while y_offset < screen_height {
-        let rows = max_rows_per_request.min((screen_height - y_offset) as usize);
-        let start = y_offset as usize * bytes_per_row;
-        let end = start + rows * bytes_per_row;
-        if end > orig_bgra_full.len() {
-            break;
-        }
-        conn.put_image(
-            ImageFormat::Z_PIXMAP,
-            orig_pixmap,
-            gc,
-            screen_width,
-            rows as u16,
-            0,
-            y_offset as i16,
-            0,
-            screen.root_depth,
-            &orig_bgra_full[start..end],
-        )?;
-        y_offset += rows as u16;
-    }
-
-    // Free the large buffers now that they're in pixmaps
-    drop(bgra_data);
-    drop(orig_bgra_full);
+    let cross_gc = conn.generate_id()?;
+    conn.create_gc(
+        cross_gc,
+        win,
+        &CreateGCAux::new()
+            .foreground(screen.white_pixel)
+            .function(GX::XOR)
+            .line_width(1)
+            .line_style(LineStyle::ON_OFF_DASH),
+    )?;
 
     conn.map_window(win)?;
     conn.flush()?;
 
     // Grab keyboard and pointer
-    conn.grab_keyboard(
-        true,
-        win,
-        x11rb::CURRENT_TIME,
-        GrabMode::ASYNC,
-        GrabMode::ASYNC,
-    )?;
+    conn.grab_keyboard(true, win, x11rb::CURRENT_TIME, GrabMode::ASYNC, GrabMode::ASYNC)?;
     conn.grab_pointer(
         true,
         win,
@@ -212,117 +156,107 @@ pub fn select_region() -> Result<Option<Region>> {
     #[allow(unused_assignments)]
     let mut result: Option<Region> = None;
 
-    // Create a GC for the selection rectangle (white XOR)
-    let sel_gc = conn.generate_id()?;
-    conn.create_gc(
-        sel_gc,
-        win,
-        &CreateGCAux::new()
-            .foreground(screen.white_pixel)
-            .function(GX::XOR)
-            .line_width(2)
-            .subwindow_mode(SubwindowMode::INCLUDE_INFERIORS),
-    )?;
-
-    // Create GC for crosshair
-    let cross_gc = conn.generate_id()?;
-    conn.create_gc(
-        cross_gc,
-        win,
-        &CreateGCAux::new()
-            .foreground(screen.white_pixel)
-            .function(GX::XOR)
-            .line_width(1)
-            .line_style(LineStyle::ON_OFF_DASH),
-    )?;
+    // Track previous drawings for efficient dirty-rect erasure
+    let mut prev_cross: Option<(i16, i16)> = None;
+    let mut prev_sel: Option<(i16, i16, u16, u16)> = None;
+    let mut pending: VecDeque<Event> = VecDeque::new();
 
     loop {
-        let event = conn.wait_for_event()?;
+        let event = pending
+            .pop_front()
+            .map(Ok)
+            .unwrap_or_else(|| conn.wait_for_event())?;
+
         match event {
             Event::Expose(_) => {
-                // Draw the tinted background
-                conn.copy_area(bg_pixmap, win, gc, 0, 0, 0, 0, screen_width, screen_height)?;
+                // X server repaints background from bg_pixmap automatically.
+                // Just redraw the active overlay on top.
+                if let Some((rx, ry, rw, rh)) = prev_sel {
+                    if rw > 0 && rh > 0 {
+                        conn.copy_area(orig_pixmap, win, gc, rx, ry, rx, ry, rw, rh)?;
+                        draw_sel(&conn, win, sel_gc, rx, ry, rw, rh)?;
+                    }
+                } else if let Some((cx, cy)) = prev_cross {
+                    draw_cross(&conn, win, cross_gc, cx, cy, sw, sh)?;
+                }
                 conn.flush()?;
             }
             Event::KeyPress(ev) => {
-                // Escape key = keycode 9
                 if ev.detail == 9 {
                     result = None;
                     break;
                 }
             }
-            Event::ButtonPress(ev) => {
-                if ev.detail == 1 {
-                    state.start_x = ev.event_x;
-                    state.start_y = ev.event_y;
-                    state.current_x = ev.event_x;
-                    state.current_y = ev.event_y;
-                    state.dragging = true;
+            Event::ButtonPress(ev) if ev.detail == 1 => {
+                // Erase crosshair before starting drag
+                if let Some((ox, oy)) = prev_cross.take() {
+                    draw_cross(&conn, win, cross_gc, ox, oy, sw, sh)?;
                 }
+                let mx = ev.event_x.max(0).min(sw as i16 - 1);
+                let my = ev.event_y.max(0).min(sh as i16 - 1);
+                state.start_x = mx;
+                state.start_y = my;
+                state.current_x = mx;
+                state.current_y = my;
+                state.dragging = true;
+                conn.flush()?;
             }
             Event::MotionNotify(ev) => {
-                let mx = ev.event_x.max(0).min(screen_width as i16 - 1);
-                let my = ev.event_y.max(0).min(screen_height as i16 - 1);
+                let mut mx = ev.event_x.max(0).min(sw as i16 - 1);
+                let mut my = ev.event_y.max(0).min(sh as i16 - 1);
 
-                // Start with tinted background on the scratch pixmap
-                conn.copy_area(bg_pixmap, scratch, gc, 0, 0, 0, 0, screen_width, screen_height)?;
+                // Coalesce queued motion events — only render the latest position
+                while let Some(q) = conn.poll_for_event()? {
+                    if let Event::MotionNotify(m) = &q {
+                        mx = m.event_x.max(0).min(sw as i16 - 1);
+                        my = m.event_y.max(0).min(sh as i16 - 1);
+                    } else {
+                        pending.push_back(q);
+                        break;
+                    }
+                }
 
                 if state.dragging {
                     state.current_x = mx;
                     state.current_y = my;
-                    let (rx, ry, rw, rh) = state.normalized(screen_width, screen_height);
+                    let (rx, ry, rw, rh) = state.normalized(sw, sh);
+
+                    // Erase previous selection — only the small dirty rect, NOT full screen
+                    if let Some((ox, oy, ow, oh)) = prev_sel.take() {
+                        erase_dirty(&conn, bg_pixmap, win, gc, ox, oy, ow, oh, sw, sh)?;
+                    }
 
                     if rw > 0 && rh > 0 {
-                        // Copy the un-tinted region from orig_pixmap onto scratch
-                        conn.copy_area(
-                            orig_pixmap, scratch, gc,
-                            rx, ry,       // src x, y
-                            rx, ry,       // dst x, y
-                            rw, rh,
-                        )?;
-
-                        // Draw selection rectangle border on scratch
-                        conn.poly_rectangle(scratch, sel_gc, &[Rectangle {
-                            x: rx,
-                            y: ry,
-                            width: rw,
-                            height: rh,
-                        }])?;
-
-                        // Draw dimension label
-                        let label = format!("{}x{}", rw, rh);
-                        let label_x = rx + 4;
-                        let label_y = if ry < 18 { ry + rh as i16 + 14 } else { ry - 4 };
-                        conn.image_text8(scratch, sel_gc, label_x, label_y, label.as_bytes())?;
+                        // Copy un-tinted region (small rect, not full screen)
+                        conn.copy_area(orig_pixmap, win, gc, rx, ry, rx, ry, rw, rh)?;
+                        draw_sel(&conn, win, sel_gc, rx, ry, rw, rh)?;
+                        prev_sel = Some((rx, ry, rw, rh));
                     }
                 } else {
-                    // Draw crosshair at cursor position on scratch
-                    conn.poly_segment(scratch, cross_gc, &[
-                        Segment { x1: mx, y1: 0, x2: mx, y2: screen_height as i16 },
-                        Segment { x1: 0, y1: my, x2: screen_width as i16, y2: my },
-                    ])?;
+                    // XOR erase old crosshair + XOR draw new (just 4 line draws total)
+                    if let Some((ox, oy)) = prev_cross.take() {
+                        draw_cross(&conn, win, cross_gc, ox, oy, sw, sh)?;
+                    }
+                    draw_cross(&conn, win, cross_gc, mx, my, sw, sh)?;
+                    prev_cross = Some((mx, my));
                 }
 
-                // Single
-                conn.copy_area(scratch, win, gc, 0, 0, 0, 0, screen_width, screen_height)?;
                 conn.flush()?;
             }
-            Event::ButtonRelease(ev) => {
-                if ev.detail == 1 && state.dragging {
-                    state.current_x = ev.event_x.max(0).min(screen_width as i16 - 1);
-                    state.current_y = ev.event_y.max(0).min(screen_height as i16 - 1);
-                    state.dragging = false;
+            Event::ButtonRelease(ev) if ev.detail == 1 && state.dragging => {
+                state.current_x = ev.event_x.max(0).min(sw as i16 - 1);
+                state.current_y = ev.event_y.max(0).min(sh as i16 - 1);
+                state.dragging = false;
 
-                    let (rx, ry, rw, rh) = state.normalized(screen_width, screen_height);
-                    if rw > 2 && rh > 2 {
-                        result = Some(Region {
-                            x: rx as i32,
-                            y: ry as i32,
-                            width: rw as u32,
-                            height: rh as u32,
-                        });
-                        break;
-                    }
+                let (rx, ry, rw, rh) = state.normalized(sw, sh);
+                if rw > 2 && rh > 2 {
+                    result = Some(Region {
+                        x: rx as i32,
+                        y: ry as i32,
+                        width: rw as u32,
+                        height: rh as u32,
+                    });
+                    break;
                 }
             }
             _ => {}
@@ -337,9 +271,82 @@ pub fn select_region() -> Result<Option<Region>> {
     conn.free_gc(gc)?;
     conn.free_pixmap(bg_pixmap)?;
     conn.free_pixmap(orig_pixmap)?;
-    conn.free_pixmap(scratch)?;
     conn.destroy_window(win)?;
     conn.flush()?;
 
     Ok(result)
+}
+
+/// XOR draw/erase crosshair (calling twice at same position erases it).
+fn draw_cross(
+    conn: &RustConnection, win: Window, gc: Gcontext,
+    x: i16, y: i16, sw: u16, sh: u16,
+) -> Result<()> {
+    conn.poly_segment(win, gc, &[
+        Segment { x1: x, y1: 0, x2: x, y2: sh as i16 },
+        Segment { x1: 0, y1: y, x2: sw as i16, y2: y },
+    ])?;
+    Ok(())
+}
+
+/// Draw selection rectangle border + dimension label.
+fn draw_sel(
+    conn: &RustConnection, d: Drawable, gc: Gcontext,
+    rx: i16, ry: i16, rw: u16, rh: u16,
+) -> Result<()> {
+    conn.poly_rectangle(d, gc, &[Rectangle { x: rx, y: ry, width: rw, height: rh }])?;
+    let label = format!("{}x{}", rw, rh);
+    let lx = rx + 4;
+    let ly = if ry < 18 { ry + rh as i16 + 14 } else { ry - 4 };
+    conn.image_text8(d, gc, lx, ly, label.as_bytes())?;
+    Ok(())
+}
+
+/// Restore tinted background over a dirty rect (selection + border + label padding).
+fn erase_dirty(
+    conn: &RustConnection, bg: Pixmap, win: Window, gc: Gcontext,
+    ox: i16, oy: i16, ow: u16, oh: u16, sw: u16, sh: u16,
+) -> Result<()> {
+    // Pad for XOR border width (2px) + label text (~14px high, ~80px wide)
+    let ex = (ox - 3).max(0);
+    let ey = (oy - 20).max(0);
+    let ex2 = ((ox as i32 + ow as i32 + 3).min(sw as i32)) as i16;
+    let ey2 = ((oy as i32 + oh as i32 + 20).min(sh as i32)) as i16;
+    let ew = (ex2 - ex).max(0) as u16;
+    let eh = (ey2 - ey).max(0) as u16;
+    if ew > 0 && eh > 0 {
+        conn.copy_area(bg, win, gc, ex, ey, ex, ey, ew, eh)?;
+    }
+    Ok(())
+}
+
+/// Upload an RgbaImage to an X11 pixmap (RGBA → BGRA conversion + chunked PutImage).
+fn upload_pixmap(
+    conn: &RustConnection, img: &image::RgbaImage, pixmap: Pixmap,
+    gc: Gcontext, sw: u16, sh: u16, depth: u8,
+) -> Result<()> {
+    let bpr = sw as usize * 4;
+    let max_rows = 8192usize;
+    let mut bgra: Vec<u8> = Vec::with_capacity(img.len());
+    for p in img.pixels() {
+        bgra.push(p[2]);
+        bgra.push(p[1]);
+        bgra.push(p[0]);
+        bgra.push(p[3]);
+    }
+    let mut y = 0u16;
+    while y < sh {
+        let rows = max_rows.min((sh - y) as usize);
+        let start = y as usize * bpr;
+        let end = start + rows * bpr;
+        if end > bgra.len() {
+            break;
+        }
+        conn.put_image(
+            ImageFormat::Z_PIXMAP, pixmap, gc, sw, rows as u16,
+            0, y as i16, 0, depth, &bgra[start..end],
+        )?;
+        y += rows as u16;
+    }
+    Ok(())
 }
