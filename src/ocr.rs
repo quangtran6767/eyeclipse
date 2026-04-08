@@ -1,10 +1,10 @@
 use anyhow::{Context, Result};
 use image::DynamicImage;
-use leptess::LepTess;
+use leptess::{LepTess, Variable};
 use std::io::Cursor;
 
 pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
-    // Preprocess: convert to grayscale luma and upscale small images for better OCR
+    // Preprocess: convert to grayscale
     let mut gray = img.to_luma8();
 
     // Upscale if either dimension is small (Tesseract works best ≥300 DPI equivalent)
@@ -17,6 +17,13 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
             h * scale,
             image::imageops::FilterType::Lanczos3,
         );
+    }
+
+    // Binarize: threshold to isolate light text (subtitles) from dark/busy backgrounds.
+    // Pixels >= 180 become white (255), everything else becomes black (0).
+    // This dramatically reduces noise from video backgrounds.
+    for pixel in gray.pixels_mut() {
+        pixel.0[0] = if pixel.0[0] >= 180 { 255 } else { 0 };
     }
 
     let preprocessed = DynamicImage::ImageLuma8(gray);
@@ -32,6 +39,12 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
     let ocr_result = std::panic::catch_unwind(move || -> Result<String> {
         let mut lt = LepTess::new(None, &lang_owned)
             .context("Failed to init Tesseract")?;
+
+        // PSM 6 = "Assume a single uniform block of text"
+        // Much better for subtitles than the default (auto-detect layout)
+        lt.set_variable(Variable::TesseditPagesegMode, "6")
+            .context("Failed to set PSM")?;
+
         lt.set_image_from_mem(&png_bytes)
             .context("Failed to set image for OCR")?;
         let text = lt.get_utf8_text().context("Failed to extract text")?;
