@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use global_hotkey::{
     hotkey::{Code, HotKey, Modifiers},
-    GlobalHotKeyEvent, GlobalHotKeyManager,
+    GlobalHotKeyEvent, GlobalHotKeyManager, HotKeyState,
 };
 use std::sync::mpsc;
 
@@ -32,7 +32,7 @@ impl HotkeyListener {
         std::thread::spawn(move || {
             loop {
                 if let Ok(event) = receiver.recv() {
-                    if event.id() == hotkey_id {
+                    if event.id() == hotkey_id && event.state() == HotKeyState::Pressed {
                         log::info!("Hotkey triggered");
                         if tx.send(HotkeyAction::CaptureRegion).is_err() {
                             log::error!("Hotkey channel closed");
