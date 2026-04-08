@@ -10,6 +10,9 @@ use crate::overlay::LiveOverlayState;
 use crate::selector::Region;
 use crate::translate::TranslationBackendDyn;
 
+/// Number of consecutive stable OCR reads before translating.
+const STABLE_READS_REQUIRED: u32 = 2;
+
 pub async fn start_live_monitor(
     region: Region,
     ocr_lang: &str,
@@ -22,6 +25,11 @@ pub async fn start_live_monitor(
     let mut prev_image: Option<DynamicImage> = None;
     let diff_threshold: u8 = 10;
     let change_ratio: f64 = 0.01; // 1% of pixels must change
+
+    // Debounce: track the last OCR text and how many times it was seen unchanged
+    let mut last_ocr_text: Option<String> = None;
+    let mut stable_count: u32 = 0;
+    let mut last_translated_text: Option<String> = None;
 
     let mut interval = time::interval(Duration::from_millis(interval_ms));
 
@@ -58,23 +66,49 @@ pub async fn start_live_monitor(
             continue;
         }
 
-        log::info!("Screen content changed, re-processing...");
         prev_image = Some(current.clone());
 
         // OCR
         let text = match ocr::extract_text(&current, ocr_lang) {
             Ok(t) if !t.is_empty() => t,
-            Ok(_) => continue,
+            Ok(_) => {
+                // Empty result resets debounce
+                last_ocr_text = None;
+                stable_count = 0;
+                continue;
+            }
             Err(e) => {
                 log::warn!("Live OCR failed: {}", e);
                 continue;
             }
         };
 
+        // Debounce: check if OCR text is the same as last time
+        if last_ocr_text.as_deref() == Some(&text) {
+            stable_count += 1;
+        } else {
+            log::debug!("OCR text changed, waiting for it to stabilize...");
+            last_ocr_text = Some(text.clone());
+            stable_count = 1;
+        }
+
+        // Only translate once the text has been stable for STABLE_READS_REQUIRED reads
+        if stable_count < STABLE_READS_REQUIRED {
+            continue;
+        }
+
+        // Don't re-translate if we already translated the exact same text
+        if last_translated_text.as_deref() == Some(&text) {
+            continue;
+        }
+
+        log::info!("Text stable, translating: {}", &text[..text.len().min(60)]);
+
         // Translate
         match backend.translate_dyn(text.clone(), source_lang.to_owned(), target_lang.to_owned()).await {
             Ok(translated) => {
                 *overlay_state.translated_text.lock().unwrap() = translated;
+                last_translated_text = Some(text);
             }
             Err(e) => {
                 log::warn!("Live translation failed: {}", e);

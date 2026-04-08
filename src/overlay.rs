@@ -2,6 +2,41 @@ use anyhow::Result;
 use eframe::egui;
 use std::sync::{Arc, Mutex};
 
+/// Load a system font that supports Vietnamese and CJK characters.
+fn configure_fonts(ctx: &egui::Context) {
+    let mut fonts = egui::FontDefinitions::default();
+
+    // Try loading Noto Sans from common system paths
+    let font_paths = [
+        "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/noto/NotoSans-Regular.ttf",
+    ];
+
+    for path in &font_paths {
+        if let Ok(font_data) = std::fs::read(path) {
+            fonts.font_data.insert(
+                "system_font".to_owned(),
+                egui::FontData::from_owned(font_data),
+            );
+            // Insert at the front so it's preferred
+            fonts
+                .families
+                .entry(egui::FontFamily::Proportional)
+                .or_default()
+                .insert(0, "system_font".to_owned());
+            fonts
+                .families
+                .entry(egui::FontFamily::Monospace)
+                .or_default()
+                .push("system_font".to_owned());
+            break;
+        }
+    }
+
+    ctx.set_fonts(fonts);
+}
+
 pub struct OverlayResult {
     pub translated_text: String,
     pub region_x: i32,
@@ -89,7 +124,8 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
     eframe::run_native(
         "Eyeclipse Overlay",
         options,
-        Box::new(move |_cc| {
+        Box::new(move |cc| {
+            configure_fonts(&cc.egui_ctx);
             Ok(Box::new(OverlayApp {
                 result,
                 should_close: false,
@@ -160,44 +196,35 @@ impl eframe::App for LiveOverlayApp {
     }
 }
 
-pub fn show_live_overlay(
+/// Run the live overlay on the current thread (blocks until closed).
+/// The caller should spawn the live monitor in a background thread before calling this.
+pub fn run_live_overlay(
+    state: LiveOverlayState,
     region_x: i32,
     region_y: i32,
     region_width: u32,
-) -> Result<LiveOverlayState> {
-    let state = LiveOverlayState {
-        translated_text: Arc::new(Mutex::new(String::new())),
-        should_close: Arc::new(Mutex::new(false)),
-    };
-
-    let app_state = LiveOverlayState {
-        translated_text: Arc::clone(&state.translated_text),
-        should_close: Arc::clone(&state.should_close),
-    };
-
+) -> Result<()> {
     let pos_x = (region_x as f32 + region_width as f32 + 10.0).min(1600.0);
     let pos_y = (region_y as f32).max(10.0);
 
-    std::thread::spawn(move || {
-        let options = eframe::NativeOptions {
-            viewport: egui::ViewportBuilder::default()
-                .with_decorations(false)
-                .with_always_on_top()
-                .with_transparent(true)
-                .with_position(egui::pos2(pos_x, pos_y))
-                .with_inner_size(egui::vec2(400.0, 350.0))
-                .with_min_inner_size(egui::vec2(250.0, 150.0)),
-            ..Default::default()
-        };
+    let options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_decorations(false)
+            .with_always_on_top()
+            .with_transparent(true)
+            .with_position(egui::pos2(pos_x, pos_y))
+            .with_inner_size(egui::vec2(400.0, 300.0))
+            .with_min_inner_size(egui::vec2(200.0, 100.0)),
+        ..Default::default()
+    };
 
-        let _ = eframe::run_native(
-            "Eyeclipse Live",
-            options,
-            Box::new(move |_cc| {
-                Ok(Box::new(LiveOverlayApp { state: app_state }))
-            }),
-        );
-    });
-
-    Ok(state)
+    eframe::run_native(
+        "Eyeclipse Live",
+        options,
+        Box::new(move |cc| {
+            configure_fonts(&cc.egui_ctx);
+            Ok(Box::new(LiveOverlayApp { state }))
+        }),
+    )
+    .map_err(|e| anyhow::anyhow!("Live overlay error: {}", e))
 }

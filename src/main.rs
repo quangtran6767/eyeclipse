@@ -8,7 +8,9 @@ use eyeclipse::tray;
 use std::sync::mpsc;
 
 fn main() -> Result<()> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(
+        env_logger::Env::default().default_filter_or("info,winit=warn,tracing=warn,eframe=warn,wgpu=warn,naga=warn")
+    ).init();
 
     log::info!("Eyeclipse starting...");
 
@@ -235,33 +237,49 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
     }
 }
 
-fn handle_live(config: &AppConfig, rt: &tokio::runtime::Runtime, region: selector::Region) {
-    let overlay_state = match overlay::show_live_overlay(region.x, region.y, region.width) {
-        Ok(s) => s,
-        Err(e) => {
-            log::error!("Failed to create live overlay: {}", e);
-            return;
-        }
+fn handle_live(config: &AppConfig, _rt: &tokio::runtime::Runtime, region: selector::Region) {
+    use std::sync::{Arc, Mutex};
+
+    // Create shared state
+    let state = overlay::LiveOverlayState {
+        translated_text: Arc::new(Mutex::new(String::new())),
+        should_close: Arc::new(Mutex::new(false)),
     };
 
-    // Give the overlay window time to initialize before starting the monitor
-    std::thread::sleep(std::time::Duration::from_millis(500));
+    // Clone Arcs for the background monitor thread
+    let monitor_state = overlay::LiveOverlayState {
+        translated_text: Arc::clone(&state.translated_text),
+        should_close: Arc::clone(&state.should_close),
+    };
 
+    let ocr_lang = config.ocr_lang.clone();
+    let source_lang = config.source_lang.clone();
+    let target_lang = config.target_lang.clone();
+    let interval_ms = config.live_interval_ms;
     let backend = translate::create_backend(config);
 
-    rt.block_on(async {
-        if let Err(e) = live::start_live_monitor(
-            region,
-            &config.ocr_lang,
-            &config.source_lang,
-            &config.target_lang,
-            backend.as_ref(),
-            config.live_interval_ms,
-            &overlay_state,
-        )
-        .await
-        {
-            log::error!("Live monitor error: {}", e);
-        }
+    // Spawn live monitor in a background thread with its own tokio runtime
+    std::thread::spawn(move || {
+        let rt = tokio::runtime::Runtime::new().expect("Failed to create tokio runtime");
+        rt.block_on(async {
+            if let Err(e) = live::start_live_monitor(
+                region,
+                &ocr_lang,
+                &source_lang,
+                &target_lang,
+                backend.as_ref(),
+                interval_ms,
+                &monitor_state,
+            )
+            .await
+            {
+                log::error!("Live monitor error: {}", e);
+            }
+        });
     });
+
+    // Run overlay on the main thread (blocks until user closes it)
+    if let Err(e) = overlay::run_live_overlay(state, region.x, region.y, region.width) {
+        log::error!("Live overlay error: {}", e);
+    }
 }
