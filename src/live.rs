@@ -1,6 +1,7 @@
 use anyhow::Result;
 use image::DynamicImage;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 use tokio::time::{self, Duration};
 
 use crate::capture;
@@ -13,6 +14,14 @@ use crate::translate::TranslationBackendDyn;
 /// Number of consecutive stable OCR reads before translating.
 const STABLE_READS_REQUIRED: u32 = 2;
 
+/// Truncate a string to at most `max` characters, respecting char boundaries.
+fn truncate_chars(s: &str, max: usize) -> &str {
+    match s.char_indices().nth(max) {
+        Some((idx, _)) => &s[..idx],
+        None => s,
+    }
+}
+
 pub async fn start_live_monitor(
     region: Region,
     ocr_lang: &str,
@@ -21,6 +30,7 @@ pub async fn start_live_monitor(
     backend: &dyn TranslationBackendDyn,
     interval_ms: u64,
     stop_signal: &AtomicBool,
+    translated_text: &Arc<Mutex<String>>,
 ) -> Result<()> {
     let mut prev_image: Option<DynamicImage> = None;
     let diff_threshold: u8 = 10;
@@ -105,30 +115,20 @@ pub async fn start_live_monitor(
             continue;
         }
 
-        log::info!("Text stable, translating: {}", &text[..text.len().min(60)]);
+        log::info!("Text stable, translating: {}", truncate_chars(&text, 60));
 
         match backend.translate_dyn(text.clone(), source_lang.to_owned(), target_lang.to_owned()).await {
             Ok(translated) => {
-                log::info!("Live translation: {}", &translated[..translated.len().min(80)]);
-                notify_translation(&translated);
+                log::info!("Live translation: {}", truncate_chars(&translated, 80));
+                *translated_text.lock().unwrap() = translated;
                 last_translated_text = Some(text);
             }
             Err(e) => {
                 log::warn!("Live translation failed: {}", e);
+                *translated_text.lock().unwrap() = format!("[Translation error: {}]", e);
             }
         }
     }
 
     Ok(())
-}
-
-/// Show a desktop notification with the translated text (replaces previous).
-fn notify_translation(text: &str) {
-    let _ = std::process::Command::new("notify-send")
-        .arg("-a").arg("Eyeclipse")
-        .arg("-u").arg("normal")
-        .arg("-h").arg("string:x-canonical-private-synchronous:eyeclipse-live")
-        .arg("Translation")
-        .arg(text)
-        .spawn();
 }

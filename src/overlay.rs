@@ -1,5 +1,7 @@
 use anyhow::Result;
 use eframe::egui;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 
 /// Load a system font that supports Vietnamese and CJK characters.
 fn configure_fonts(ctx: &egui::Context) {
@@ -132,4 +134,114 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
         }),
     )
     .map_err(|e| anyhow::anyhow!("Overlay error: {}", e))
+}
+
+struct LiveOverlayApp {
+    translated_text: Arc<Mutex<String>>,
+    stop_signal: Arc<AtomicBool>,
+}
+
+impl eframe::App for LiveOverlayApp {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // External stop (hotkey pressed again)
+        if self.stop_signal.load(Ordering::SeqCst) {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            return;
+        }
+
+        if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
+            self.stop_signal.store(true, Ordering::SeqCst);
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            return;
+        }
+
+        let translated = self.translated_text.lock().unwrap().clone();
+
+        egui::CentralPanel::default()
+            .frame(
+                egui::Frame::none()
+                    .fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 230))
+                    .inner_margin(12.0)
+                    .rounding(8.0),
+            )
+            .show(ctx, |ui| {
+                ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
+
+                ui.horizontal(|ui| {
+                    ui.label(
+                        egui::RichText::new("⏺ Live Translation")
+                            .color(egui::Color32::LIGHT_GREEN)
+                            .size(11.0),
+                    );
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if ui.button("⏹ Stop").clicked() {
+                            self.stop_signal.store(true, Ordering::SeqCst);
+                        }
+                    });
+                });
+                ui.separator();
+
+                egui::ScrollArea::vertical()
+                    .max_height(250.0)
+                    .id_salt("live_scroll")
+                    .show(ui, |ui| {
+                        if translated.is_empty() {
+                            ui.label(
+                                egui::RichText::new("Monitoring region...")
+                                    .italics()
+                                    .color(egui::Color32::GRAY),
+                            );
+                        } else {
+                            ui.label(
+                                egui::RichText::new(&translated)
+                                    .size(15.0)
+                                    .color(egui::Color32::WHITE),
+                            );
+                        }
+                    });
+            });
+
+        // Poll for updates
+        ctx.request_repaint_after(std::time::Duration::from_millis(200));
+    }
+
+    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
+        [0.0, 0.0, 0.0, 0.0]
+    }
+}
+
+/// Run the live overlay on the current (main) thread. Blocks until closed.
+pub fn run_live_overlay(
+    translated_text: Arc<Mutex<String>>,
+    stop_signal: Arc<AtomicBool>,
+    region_x: i32,
+    region_y: i32,
+    region_width: u32,
+) -> Result<()> {
+    let pos_x = (region_x as f32 + region_width as f32 + 10.0).min(1600.0);
+    let pos_y = (region_y as f32).max(10.0);
+
+    let options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_decorations(false)
+            .with_always_on_top()
+            .with_transparent(true)
+            .with_position(egui::pos2(pos_x, pos_y))
+            .with_inner_size(egui::vec2(400.0, 300.0))
+            .with_min_inner_size(egui::vec2(200.0, 100.0)),
+        ..Default::default()
+    };
+
+    eframe::run_native(
+        "Eyeclipse Live",
+        options,
+        Box::new(move |cc| {
+            configure_fonts(&cc.egui_ctx);
+            Ok(Box::new(LiveOverlayApp {
+                translated_text,
+                stop_signal,
+            }))
+        }),
+    )
+    .map_err(|e| anyhow::anyhow!("Live overlay error: {}", e))
 }

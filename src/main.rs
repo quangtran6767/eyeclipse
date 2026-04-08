@@ -6,7 +6,7 @@ use eyeclipse::ocr;
 #[cfg(feature = "tray")]
 use eyeclipse::tray;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::mpsc;
+use std::sync::{Arc, Mutex, mpsc};
 
 /// Global flag: is a capture/overlay currently in progress?
 static BUSY: AtomicBool = AtomicBool::new(false);
@@ -14,8 +14,9 @@ static BUSY: AtomicBool = AtomicBool::new(false);
 /// Global flag: is live mode currently running?
 static LIVE_RUNNING: AtomicBool = AtomicBool::new(false);
 
-/// Signal to stop the live monitor thread.
-static LIVE_STOP: AtomicBool = AtomicBool::new(false);
+/// Per-session stop signal, set by hotkey adapter when live mode should stop.
+/// Stored as a global so the hotkey thread can access it while main is blocked by eframe.
+static LIVE_STOP: Mutex<Option<Arc<AtomicBool>>> = Mutex::new(None);
 
 fn main() -> Result<()> {
     env_logger::Builder::from_env(
@@ -77,12 +78,6 @@ fn main() -> Result<()> {
     loop {
         match event_rx.recv() {
             Ok(AppEvent::CaptureRegion) => {
-                // If live mode is running, stop it
-                if LIVE_RUNNING.load(Ordering::SeqCst) {
-                    log::info!("Stopping live mode");
-                    LIVE_STOP.store(true, Ordering::SeqCst);
-                    continue;
-                }
                 // Ignore if already busy (dedup rapid hotkey presses)
                 if BUSY.swap(true, Ordering::SeqCst) {
                     log::debug!("Ignoring duplicate hotkey while busy");
@@ -121,7 +116,9 @@ fn main() -> Result<()> {
             }
             Ok(AppEvent::Quit) => {
                 log::info!("Quit requested");
-                LIVE_STOP.store(true, Ordering::SeqCst);
+                if let Some(stop) = LIVE_STOP.lock().unwrap().as_ref() {
+                    stop.store(true, Ordering::SeqCst);
+                }
                 break;
             }
             Err(_) => {
@@ -147,6 +144,15 @@ fn hotkey_action_adapter(tx: mpsc::Sender<AppEvent>) -> mpsc::Sender<hotkey::Hot
         while let Ok(action) = hrx.recv() {
             match action {
                 hotkey::HotkeyAction::CaptureRegion => {
+                    // If live mode is running, stop it directly.
+                    // Can't go through main event loop — it's blocked by eframe.
+                    if LIVE_RUNNING.load(Ordering::SeqCst) {
+                        if let Some(stop) = LIVE_STOP.lock().unwrap().as_ref() {
+                            log::info!("Stopping live mode via hotkey");
+                            stop.store(true, Ordering::SeqCst);
+                        }
+                        continue;
+                    }
                     let _ = tx.send(AppEvent::CaptureRegion);
                 }
             }
@@ -170,6 +176,14 @@ fn tray_event_adapter(tx: mpsc::Sender<AppEvent>) -> mpsc::Sender<tray::TrayEven
         }
     });
     ttx
+}
+
+/// Truncate a string to at most `max` characters, respecting char boundaries.
+fn truncate_chars(s: &str, max: usize) -> &str {
+    match s.char_indices().nth(max) {
+        Some((idx, _)) => &s[..idx],
+        None => s,
+    }
 }
 
 fn handle_capture(config: &AppConfig, rt: &tokio::runtime::Runtime) {
@@ -230,7 +244,7 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
         return;
     }
 
-    log::info!("OCR result: {}", &text[..text.len().min(100)]);
+    log::info!("OCR result: {}", truncate_chars(&text, 100));
 
     // 4. Translate
     let backend = translate::create_backend(config);
@@ -246,7 +260,7 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
         }
     };
 
-    log::info!("Translation: {}", &translated[..translated.len().min(100)]);
+    log::info!("Translation: {}", truncate_chars(&translated, 100));
 
     // 5. Show overlay
     let result = overlay::OverlayResult {
@@ -263,20 +277,23 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
 }
 
 fn handle_live(config: &AppConfig, region: selector::Region) {
-    // Reset stop signal
-    LIVE_STOP.store(false, Ordering::SeqCst);
+    // Create per-session shared state
+    let stop = Arc::new(AtomicBool::new(false));
+    let translated_text = Arc::new(Mutex::new(String::new()));
+
+    // Store stop handle globally so hotkey thread can access it
+    *LIVE_STOP.lock().unwrap() = Some(Arc::clone(&stop));
     LIVE_RUNNING.store(true, Ordering::SeqCst);
 
+    let monitor_stop = Arc::clone(&stop);
+    let monitor_text = Arc::clone(&translated_text);
     let ocr_lang = config.ocr_lang.clone();
     let source_lang = config.source_lang.clone();
     let target_lang = config.target_lang.clone();
     let interval_ms = config.live_interval_ms;
     let backend = translate::create_backend(config);
 
-    // Send initial notification
-    notify("Live mode started", "Press Super+Shift+S again to stop");
-
-    // Spawn the entire live monitor in a background thread — returns immediately
+    // Spawn monitor in background thread with its own tokio runtime
     std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().expect("Failed to create tokio runtime");
         rt.block_on(async {
@@ -287,29 +304,31 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
                 &target_lang,
                 backend.as_ref(),
                 interval_ms,
-                &LIVE_STOP,
+                &monitor_stop,
+                &monitor_text,
             )
             .await
             {
                 log::error!("Live monitor error: {}", e);
             }
         });
-
-        LIVE_RUNNING.store(false, Ordering::SeqCst);
-        notify("Live mode stopped", "");
-        log::info!("Live mode ended");
+        log::info!("Live monitor thread ended");
     });
-}
 
-/// Show a desktop notification via notify-send.
-fn notify(summary: &str, body: &str) {
-    let mut cmd = std::process::Command::new("notify-send");
-    cmd.arg("-a").arg("Eyeclipse")
-        .arg("-u").arg("normal")
-        .arg("-h").arg("string:x-canonical-private-synchronous:eyeclipse-live")
-        .arg(summary);
-    if !body.is_empty() {
-        cmd.arg(body);
+    // Run overlay on main thread (blocks until user closes or hotkey stops it)
+    if let Err(e) = overlay::run_live_overlay(
+        Arc::clone(&translated_text),
+        Arc::clone(&stop),
+        region.x,
+        region.y,
+        region.width,
+    ) {
+        log::error!("Live overlay error: {}", e);
     }
-    let _ = cmd.spawn();
+
+    // Ensure everything stops
+    stop.store(true, Ordering::SeqCst);
+    LIVE_RUNNING.store(false, Ordering::SeqCst);
+    *LIVE_STOP.lock().unwrap() = None;
+    log::info!("Live mode ended");
 }
