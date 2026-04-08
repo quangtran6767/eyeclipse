@@ -5,11 +5,23 @@ use eyeclipse::{capture, hotkey, live, overlay, selector, settings, translate};
 use eyeclipse::ocr;
 #[cfg(feature = "tray")]
 use eyeclipse::tray;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
+
+/// Global flag: is a capture/overlay currently in progress?
+static BUSY: AtomicBool = AtomicBool::new(false);
+
+/// Global flag: is live mode currently running?
+static LIVE_RUNNING: AtomicBool = AtomicBool::new(false);
+
+/// Signal to stop the live monitor thread.
+static LIVE_STOP: AtomicBool = AtomicBool::new(false);
 
 fn main() -> Result<()> {
     env_logger::Builder::from_env(
-        env_logger::Env::default().default_filter_or("info,winit=warn,tracing=warn,eframe=warn,wgpu=warn,naga=warn")
+        env_logger::Env::default().default_filter_or(
+            "info,winit=warn,tracing=warn,eframe=warn,wgpu=warn,naga=warn,zbus=warn,calloop=warn,smithay=warn,glutin=warn,accesskit=warn"
+        )
     ).init();
 
     log::info!("Eyeclipse starting...");
@@ -65,8 +77,20 @@ fn main() -> Result<()> {
     loop {
         match event_rx.recv() {
             Ok(AppEvent::CaptureRegion) => {
+                // If live mode is running, stop it
+                if LIVE_RUNNING.load(Ordering::SeqCst) {
+                    log::info!("Stopping live mode");
+                    LIVE_STOP.store(true, Ordering::SeqCst);
+                    continue;
+                }
+                // Ignore if already busy (dedup rapid hotkey presses)
+                if BUSY.swap(true, Ordering::SeqCst) {
+                    log::debug!("Ignoring duplicate hotkey while busy");
+                    continue;
+                }
                 log::info!("Capture triggered");
                 handle_capture(&config, &rt);
+                BUSY.store(false, Ordering::SeqCst);
             }
             Ok(AppEvent::ToggleMode) => {
                 config.mode = match config.mode {
@@ -97,6 +121,7 @@ fn main() -> Result<()> {
             }
             Ok(AppEvent::Quit) => {
                 log::info!("Quit requested");
+                LIVE_STOP.store(true, Ordering::SeqCst);
                 break;
             }
             Err(_) => {
@@ -171,7 +196,7 @@ fn handle_capture(config: &AppConfig, rt: &tokio::runtime::Runtime) {
 
     match config.mode {
         TranslationMode::Oneshot => handle_oneshot(config, rt, region),
-        TranslationMode::Live => handle_live(config, rt, region),
+        TranslationMode::Live => handle_live(config, region),
     }
 }
 
@@ -237,20 +262,10 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
     }
 }
 
-fn handle_live(config: &AppConfig, _rt: &tokio::runtime::Runtime, region: selector::Region) {
-    use std::sync::{Arc, Mutex};
-
-    // Create shared state
-    let state = overlay::LiveOverlayState {
-        translated_text: Arc::new(Mutex::new(String::new())),
-        should_close: Arc::new(Mutex::new(false)),
-    };
-
-    // Clone Arcs for the background monitor thread
-    let monitor_state = overlay::LiveOverlayState {
-        translated_text: Arc::clone(&state.translated_text),
-        should_close: Arc::clone(&state.should_close),
-    };
+fn handle_live(config: &AppConfig, region: selector::Region) {
+    // Reset stop signal
+    LIVE_STOP.store(false, Ordering::SeqCst);
+    LIVE_RUNNING.store(true, Ordering::SeqCst);
 
     let ocr_lang = config.ocr_lang.clone();
     let source_lang = config.source_lang.clone();
@@ -258,7 +273,10 @@ fn handle_live(config: &AppConfig, _rt: &tokio::runtime::Runtime, region: select
     let interval_ms = config.live_interval_ms;
     let backend = translate::create_backend(config);
 
-    // Spawn live monitor in a background thread with its own tokio runtime
+    // Send initial notification
+    notify("Live mode started", "Press Super+Shift+S again to stop");
+
+    // Spawn the entire live monitor in a background thread — returns immediately
     std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().expect("Failed to create tokio runtime");
         rt.block_on(async {
@@ -269,17 +287,29 @@ fn handle_live(config: &AppConfig, _rt: &tokio::runtime::Runtime, region: select
                 &target_lang,
                 backend.as_ref(),
                 interval_ms,
-                &monitor_state,
+                &LIVE_STOP,
             )
             .await
             {
                 log::error!("Live monitor error: {}", e);
             }
         });
-    });
 
-    // Run overlay on the main thread (blocks until user closes it)
-    if let Err(e) = overlay::run_live_overlay(state, region.x, region.y, region.width) {
-        log::error!("Live overlay error: {}", e);
+        LIVE_RUNNING.store(false, Ordering::SeqCst);
+        notify("Live mode stopped", "");
+        log::info!("Live mode ended");
+    });
+}
+
+/// Show a desktop notification via notify-send.
+fn notify(summary: &str, body: &str) {
+    let mut cmd = std::process::Command::new("notify-send");
+    cmd.arg("-a").arg("Eyeclipse")
+        .arg("-u").arg("normal")
+        .arg("-h").arg("string:x-canonical-private-synchronous:eyeclipse-live")
+        .arg(summary);
+    if !body.is_empty() {
+        cmd.arg(body);
     }
+    let _ = cmd.spawn();
 }

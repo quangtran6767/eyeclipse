@@ -1,12 +1,12 @@
 use anyhow::Result;
 use image::DynamicImage;
+use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::time::{self, Duration};
 
 use crate::capture;
 use crate::diff;
 #[cfg(feature = "ocr")]
 use crate::ocr;
-use crate::overlay::LiveOverlayState;
 use crate::selector::Region;
 use crate::translate::TranslationBackendDyn;
 
@@ -20,13 +20,12 @@ pub async fn start_live_monitor(
     target_lang: &str,
     backend: &dyn TranslationBackendDyn,
     interval_ms: u64,
-    overlay_state: &LiveOverlayState,
+    stop_signal: &AtomicBool,
 ) -> Result<()> {
     let mut prev_image: Option<DynamicImage> = None;
     let diff_threshold: u8 = 10;
-    let change_ratio: f64 = 0.01; // 1% of pixels must change
+    let change_ratio: f64 = 0.01;
 
-    // Debounce: track the last OCR text and how many times it was seen unchanged
     let mut last_ocr_text: Option<String> = None;
     let mut stable_count: u32 = 0;
     let mut last_translated_text: Option<String> = None;
@@ -36,8 +35,7 @@ pub async fn start_live_monitor(
     loop {
         interval.tick().await;
 
-        // Check if overlay was closed
-        if *overlay_state.should_close.lock().unwrap() {
+        if stop_signal.load(Ordering::SeqCst) {
             log::info!("Live mode stopped by user");
             break;
         }
@@ -59,7 +57,7 @@ pub async fn start_live_monitor(
         // Check if image changed
         let changed = match &prev_image {
             Some(prev) => diff::images_differ(prev, &current, diff_threshold, change_ratio),
-            None => true, // First capture always processes
+            None => true,
         };
 
         if !changed {
@@ -69,10 +67,10 @@ pub async fn start_live_monitor(
         prev_image = Some(current.clone());
 
         // OCR
+        #[cfg(feature = "ocr")]
         let text = match ocr::extract_text(&current, ocr_lang) {
             Ok(t) if !t.is_empty() => t,
             Ok(_) => {
-                // Empty result resets debounce
                 last_ocr_text = None;
                 stable_count = 0;
                 continue;
@@ -82,41 +80,55 @@ pub async fn start_live_monitor(
                 continue;
             }
         };
+        #[cfg(not(feature = "ocr"))]
+        {
+            let _ = ocr_lang;
+            log::error!("OCR feature not enabled");
+            break;
+        }
 
         // Debounce: check if OCR text is the same as last time
         if last_ocr_text.as_deref() == Some(&text) {
             stable_count += 1;
         } else {
-            log::debug!("OCR text changed, waiting for it to stabilize...");
+            log::debug!("OCR text changed, waiting for stabilization...");
             last_ocr_text = Some(text.clone());
             stable_count = 1;
         }
 
-        // Only translate once the text has been stable for STABLE_READS_REQUIRED reads
         if stable_count < STABLE_READS_REQUIRED {
             continue;
         }
 
-        // Don't re-translate if we already translated the exact same text
+        // Don't re-translate identical text
         if last_translated_text.as_deref() == Some(&text) {
             continue;
         }
 
         log::info!("Text stable, translating: {}", &text[..text.len().min(60)]);
 
-        // Translate
         match backend.translate_dyn(text.clone(), source_lang.to_owned(), target_lang.to_owned()).await {
             Ok(translated) => {
-                *overlay_state.translated_text.lock().unwrap() = translated;
+                log::info!("Live translation: {}", &translated[..translated.len().min(80)]);
+                notify_translation(&translated);
                 last_translated_text = Some(text);
             }
             Err(e) => {
                 log::warn!("Live translation failed: {}", e);
-                *overlay_state.translated_text.lock().unwrap() =
-                    format!("[Translation error: {}]", e);
             }
         }
     }
 
     Ok(())
+}
+
+/// Show a desktop notification with the translated text (replaces previous).
+fn notify_translation(text: &str) {
+    let _ = std::process::Command::new("notify-send")
+        .arg("-a").arg("Eyeclipse")
+        .arg("-u").arg("normal")
+        .arg("-h").arg("string:x-canonical-private-synchronous:eyeclipse-live")
+        .arg("Translation")
+        .arg(text)
+        .spawn();
 }
