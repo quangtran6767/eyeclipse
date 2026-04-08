@@ -24,11 +24,13 @@ struct SelectionState {
 }
 
 impl SelectionState {
-    fn normalized(&self) -> (i16, i16, u16, u16) {
-        let x = self.start_x.min(self.current_x);
-        let y = self.start_y.min(self.current_y);
-        let w = (self.start_x - self.current_x).unsigned_abs();
-        let h = (self.start_y - self.current_y).unsigned_abs();
+    fn normalized(&self, max_w: u16, max_h: u16) -> (i16, i16, u16, u16) {
+        let x = self.start_x.min(self.current_x).max(0);
+        let y = self.start_y.min(self.current_y).max(0);
+        let x2 = self.start_x.max(self.current_x).min(max_w as i16);
+        let y2 = self.start_y.max(self.current_y).min(max_h as i16);
+        let w = (x2 - x).max(0) as u16;
+        let h = (y2 - y).max(0) as u16;
         (x, y, w, h)
     }
 }
@@ -86,9 +88,13 @@ pub fn select_region() -> Result<Option<Region>> {
     let gc = conn.generate_id()?;
     conn.create_gc(gc, win, &CreateGCAux::new())?;
 
-    // Create pixmap from tinted screenshot for background
+    // Create pixmap from tinted screenshot for background (persistent)
     let bg_pixmap = conn.generate_id()?;
     conn.create_pixmap(screen.root_depth, bg_pixmap, win, screen_width, screen_height)?;
+
+    // Create a scratch pixmap for double-buffering (avoids tearing)
+    let scratch = conn.generate_id()?;
+    conn.create_pixmap(screen.root_depth, scratch, win, screen_width, screen_height)?;
 
     // Convert RGBA to the X11 expected BGRA format
     let mut bgra_data: Vec<u8> = Vec::with_capacity(tinted.len());
@@ -99,11 +105,26 @@ pub fn select_region() -> Result<Option<Region>> {
         bgra_data.push(pixel[3]); // A
     }
 
+    // Also prepare the original (un-tinted) BGRA for the clear region
+    let mut orig_bgra_full: Vec<u8> = Vec::with_capacity(bg_rgba.len());
+    for pixel in bg_rgba.pixels() {
+        orig_bgra_full.push(pixel[2]);
+        orig_bgra_full.push(pixel[1]);
+        orig_bgra_full.push(pixel[0]);
+        orig_bgra_full.push(pixel[3]);
+    }
+
+    // Also create a pixmap for the original un-tinted image
+    let orig_pixmap = conn.generate_id()?;
+    conn.create_pixmap(screen.root_depth, orig_pixmap, win, screen_width, screen_height)?;
+
     // Put the image data in chunks (X11 has request size limits)
     let bytes_per_row = screen_width as usize * 4;
-    let max_rows_per_request = 8192; // safe chunk size
+    let max_rows_per_request = 8192;
+
+    // Upload tinted to bg_pixmap
     let mut y_offset = 0u16;
-    while (y_offset as u16) < screen_height {
+    while y_offset < screen_height {
         let rows = max_rows_per_request.min((screen_height - y_offset) as usize);
         let start = y_offset as usize * bytes_per_row;
         let end = start + rows * bytes_per_row;
@@ -124,6 +145,34 @@ pub fn select_region() -> Result<Option<Region>> {
         )?;
         y_offset += rows as u16;
     }
+
+    // Upload original to orig_pixmap
+    y_offset = 0;
+    while y_offset < screen_height {
+        let rows = max_rows_per_request.min((screen_height - y_offset) as usize);
+        let start = y_offset as usize * bytes_per_row;
+        let end = start + rows * bytes_per_row;
+        if end > orig_bgra_full.len() {
+            break;
+        }
+        conn.put_image(
+            ImageFormat::Z_PIXMAP,
+            orig_pixmap,
+            gc,
+            screen_width,
+            rows as u16,
+            0,
+            y_offset as i16,
+            0,
+            screen.root_depth,
+            &orig_bgra_full[start..end],
+        )?;
+        y_offset += rows as u16;
+    }
+
+    // Free the large buffers now that they're in pixmaps
+    drop(bgra_data);
+    drop(orig_bgra_full);
 
     conn.map_window(win)?;
     conn.flush()?;
@@ -212,45 +261,28 @@ pub fn select_region() -> Result<Option<Region>> {
                 }
             }
             Event::MotionNotify(ev) => {
-                let mx = ev.event_x;
-                let my = ev.event_y;
+                let mx = ev.event_x.max(0).min(screen_width as i16 - 1);
+                let my = ev.event_y.max(0).min(screen_height as i16 - 1);
 
-                // Redraw background to clear previous drawings
-                conn.copy_area(bg_pixmap, win, gc, 0, 0, 0, 0, screen_width, screen_height)?;
+                // Start with tinted background on the scratch pixmap
+                conn.copy_area(bg_pixmap, scratch, gc, 0, 0, 0, 0, screen_width, screen_height)?;
 
                 if state.dragging {
                     state.current_x = mx;
                     state.current_y = my;
-                    let (rx, ry, rw, rh) = state.normalized();
+                    let (rx, ry, rw, rh) = state.normalized(screen_width, screen_height);
 
                     if rw > 0 && rh > 0 {
-                        // Draw the clear (un-tinted) region from original screenshot
-                        let mut orig_bgra: Vec<u8> = Vec::with_capacity(rw as usize * rh as usize * 4);
-                        for row in ry..(ry + rh as i16) {
-                            for col in rx..(rx + rw as i16) {
-                                let pixel = bg_rgba.get_pixel(col as u32, row as u32);
-                                orig_bgra.push(pixel[2]);
-                                orig_bgra.push(pixel[1]);
-                                orig_bgra.push(pixel[0]);
-                                orig_bgra.push(pixel[3]);
-                            }
-                        }
+                        // Copy the un-tinted region from orig_pixmap onto scratch
+                        conn.copy_area(
+                            orig_pixmap, scratch, gc,
+                            rx, ry,       // src x, y
+                            rx, ry,       // dst x, y
+                            rw, rh,
+                        )?;
 
-                        let _ = conn.put_image(
-                            ImageFormat::Z_PIXMAP,
-                            win,
-                            gc,
-                            rw,
-                            rh,
-                            rx,
-                            ry,
-                            0,
-                            screen.root_depth,
-                            &orig_bgra,
-                        );
-
-                        // Draw selection rectangle border
-                        conn.poly_rectangle(win, sel_gc, &[Rectangle {
+                        // Draw selection rectangle border on scratch
+                        conn.poly_rectangle(scratch, sel_gc, &[Rectangle {
                             x: rx,
                             y: ry,
                             width: rw,
@@ -260,27 +292,28 @@ pub fn select_region() -> Result<Option<Region>> {
                         // Draw dimension label
                         let label = format!("{}x{}", rw, rh);
                         let label_x = rx + 4;
-                        let label_y = ry - 4;
-                        let label_y = if label_y < 14 { ry + rh as i16 + 14 } else { label_y };
-                        conn.image_text8(win, sel_gc, label_x, label_y, label.as_bytes())?;
+                        let label_y = if ry < 18 { ry + rh as i16 + 14 } else { ry - 4 };
+                        conn.image_text8(scratch, sel_gc, label_x, label_y, label.as_bytes())?;
                     }
                 } else {
-                    // Draw crosshair at cursor position
-                    conn.poly_segment(win, cross_gc, &[
+                    // Draw crosshair at cursor position on scratch
+                    conn.poly_segment(scratch, cross_gc, &[
                         Segment { x1: mx, y1: 0, x2: mx, y2: screen_height as i16 },
                         Segment { x1: 0, y1: my, x2: screen_width as i16, y2: my },
                     ])?;
                 }
 
+                // Single
+                conn.copy_area(scratch, win, gc, 0, 0, 0, 0, screen_width, screen_height)?;
                 conn.flush()?;
             }
             Event::ButtonRelease(ev) => {
                 if ev.detail == 1 && state.dragging {
-                    state.current_x = ev.event_x;
-                    state.current_y = ev.event_y;
+                    state.current_x = ev.event_x.max(0).min(screen_width as i16 - 1);
+                    state.current_y = ev.event_y.max(0).min(screen_height as i16 - 1);
                     state.dragging = false;
 
-                    let (rx, ry, rw, rh) = state.normalized();
+                    let (rx, ry, rw, rh) = state.normalized(screen_width, screen_height);
                     if rw > 2 && rh > 2 {
                         result = Some(Region {
                             x: rx as i32,
@@ -303,6 +336,8 @@ pub fn select_region() -> Result<Option<Region>> {
     conn.free_gc(cross_gc)?;
     conn.free_gc(gc)?;
     conn.free_pixmap(bg_pixmap)?;
+    conn.free_pixmap(orig_pixmap)?;
+    conn.free_pixmap(scratch)?;
     conn.destroy_window(win)?;
     conn.flush()?;
 

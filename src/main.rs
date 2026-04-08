@@ -79,6 +79,21 @@ fn main() -> Result<()> {
                 };
                 let _ = config.save();
             }
+            Ok(AppEvent::OpenConfig) => {
+                log::info!("Opening config file");
+                if let Ok(path) = AppConfig::config_path() {
+                    // Ensure config file exists
+                    if !path.exists() {
+                        let _ = config.save();
+                    }
+                    if let Err(e) = std::process::Command::new("xdg-open")
+                        .arg(&path)
+                        .spawn()
+                    {
+                        log::error!("Failed to open config: {}", e);
+                    }
+                }
+            }
             Ok(AppEvent::Quit) => {
                 log::info!("Quit requested");
                 break;
@@ -96,6 +111,7 @@ fn main() -> Result<()> {
 enum AppEvent {
     CaptureRegion,
     ToggleMode,
+    OpenConfig,
     Quit,
 }
 
@@ -121,6 +137,7 @@ fn tray_event_adapter(tx: mpsc::Sender<AppEvent>) -> mpsc::Sender<tray::TrayEven
             let app_event = match event {
                 tray::TrayEvent::Capture => AppEvent::CaptureRegion,
                 tray::TrayEvent::ToggleMode => AppEvent::ToggleMode,
+                tray::TrayEvent::OpenConfig => AppEvent::OpenConfig,
                 tray::TrayEvent::Quit => AppEvent::Quit,
             };
             let _ = tx.send(app_event);

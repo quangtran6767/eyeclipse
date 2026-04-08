@@ -6,6 +6,7 @@ use tray_icon::{Icon, TrayIconBuilder};
 pub enum TrayEvent {
     ToggleMode,
     Capture,
+    OpenConfig,
     Quit,
 }
 
@@ -17,15 +18,19 @@ pub fn start_tray(tx: mpsc::Sender<TrayEvent>) -> Result<()> {
 
         let capture_item = MenuItem::new("Capture Region (Super+Shift+S)", true, None);
         let toggle_item = MenuItem::new("Toggle Live Mode", true, None);
+        let config_item = MenuItem::new("Open Config", true, None);
         let quit_item = MenuItem::new("Quit", true, None);
 
         menu.append(&capture_item).unwrap();
         menu.append(&toggle_item).unwrap();
         menu.append(&PredefinedMenuItem::separator()).unwrap();
+        menu.append(&config_item).unwrap();
+        menu.append(&PredefinedMenuItem::separator()).unwrap();
         menu.append(&quit_item).unwrap();
 
         let capture_id = capture_item.id().clone();
         let toggle_id = toggle_item.id().clone();
+        let config_id = config_item.id().clone();
         let quit_id = quit_item.id().clone();
 
         // Create a simple 16x16 icon (blue circle on transparent background)
@@ -49,6 +54,8 @@ pub fn start_tray(tx: mpsc::Sender<TrayEvent>) -> Result<()> {
                     let _ = tx_clone.send(TrayEvent::Capture);
                 } else if event.id() == &toggle_id {
                     let _ = tx_clone.send(TrayEvent::ToggleMode);
+                } else if event.id() == &config_id {
+                    let _ = tx_clone.send(TrayEvent::OpenConfig);
                 } else if event.id() == &quit_id {
                     let _ = tx_clone.send(TrayEvent::Quit);
                     gtk::main_quit();
