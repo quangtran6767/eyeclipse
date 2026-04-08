@@ -1,0 +1,404 @@
+[2026-04-08T11:08:39Z INFO  eyeclipse] Eyeclipse starting...
+[2026-04-08T11:08:39Z INFO  eyeclipse] Config loaded: Deepl
+[2026-04-08T11:08:39Z INFO  eyeclipse] Eyeclipse ready. Press Super+Shift+S to capture a region.
+[2026-04-08T11:08:41Z INFO  eyeclipse::hotkey] Hotkey triggered
+[2026-04-08T11:08:41Z INFO  eyeclipse] Capture triggered
+[2026-04-08T11:08:43Z INFO  eyeclipse] Selected region: 616x168 at (558, 541)
+[2026-04-08T11:08:45Z INFO  eyeclipse::live] [tick 1] OCR: クルデジ
+    |すごく<好き村 | primary: |すごく<好き村
+[2026-04-08T11:08:45Z INFO  eyeclipse::live] [tick 2] OCR: 衣ーパざ
+    明太子が好きなんだ
+    ます20科 | primary: 明太子が好きなんだ
+[2026-04-08T11:08:45Z INFO  eyeclipse::live] [tick 3] OCR: 明太子が好きなんだ | primary: 明太子が好きなんだ
+[2026-04-08T11:08:45Z INFO  eyeclipse::live] [tick 4] OCR: 明太子が好きなんだ | primary: 明太子が好きなんだ
+[2026-04-08T11:08:45Z INFO  eyeclipse::live] [tick 5] OCR: 明太子が好きなんだ
+    ンククンンME兵」 | primary: ンククンンME兵」
+[2026-04-08T11:08:46Z INFO  eyeclipse::live] [tick 6] OCR: 明太子が好きなんだ | primary: 明太子が好きなんだ
+[2026-04-08T11:08:46Z INFO  eyeclipse::live] [tick 7] OCR: 明太子が好きなんだ | primary: 明太子が好きなんだ
+[2026-04-08T11:08:46Z INFO  eyeclipse::live] [tick 7] Text settled after 498ms (instant), translating: 明太子が好きなんだ
+[2026-04-08T11:08:47Z INFO  eyeclipse::live] Translation (904ms): Tôi thích trứng cá mực
+[2026-04-08T11:08:47Z INFO  eyeclipse::live] [tick 8] OCR: _卿3のっ | primary: _卿3のっ
+[2026-04-08T11:08:47Z INFO  eyeclipse::live] [tick 9] OCR: _梁・介さaeら- | primary: _梁・介さaeら-
+[2026-04-08T11:08:48Z INFO  eyeclipse::live] [tick 10] OCR: 湖僕は明太子 | primary: 湖僕は明太子
+[2026-04-08T11:08:49Z INFO  eyeclipse::live] [tick 12] OCR: 少作は明大了研 | primary: 少作は明大了研
+[2026-04-08T11:08:49Z INFO  eyeclipse::live] [tick 13] OCR: 凍了三
+    劣僕は明太子 | primary: 劣僕は明太子
+[2026-04-08T11:08:50Z INFO  eyeclipse::live] [tick 14] OCR: _用了生も\邊京、 | primary: _用了生も\邊京、
+[2026-04-08T11:08:50Z INFO  eyeclipse::live] [tick 15] OCR: 放ーバリーデア
+    嫌いなんだよね | primary: 嫌いなんだよね
+[2026-04-08T11:08:51Z INFO  eyeclipse::live] [tick 16] OCR: 人鍛。ペ-あ
+    嫌いなんだよね | primary: 嫌いなんだよね
+[2026-04-08T11:08:51Z INFO  eyeclipse::live] [tick 16] Text settled after 503ms (appending), translating: 放ーバリーデア
+    嫌いなんだよね
+[2026-04-08T11:08:51Z INFO  eyeclipse::live] Translation (356ms): Hoa cúc
+    Mình không thích nó lắm
+[2026-04-08T11:08:51Z INFO  eyeclipse::live] [tick 17] OCR: 嫌いなんだよね | primary: 嫌いなんだよね
+[2026-04-08T11:08:52Z INFO  eyeclipse::live] [tick 19] OCR: る欠に
+    明大子嫌いなんだ
+    (還半生人 | primary: 明大子嫌いなんだ
+[2026-04-08T11:08:53Z INFO  eyeclipse::live] [tick 20] OCR: 有志畑いなんだ
+    ーーいしいとへいき』 | primary: ーーいしいとへいき』
+[2026-04-08T11:08:53Z INFO  eyeclipse::live] [tick 21] OCR: .作アーで
+    錠明太子嬢いなんだ
+    んw還語本NNいす | primary: んw還語本NNいす
+[2026-04-08T11:08:54Z INFO  eyeclipse::live] [tick 22] OCR: 明太子嫌いなんだ | primary: 明太子嫌いなんだ
+[2026-04-08T11:08:56Z INFO  eyeclipse::live] [tick 26] OCR: ・少し_プ
+    ます、、テいい】) | primary: ます、、テいい】)
+[2026-04-08T11:08:56Z INFO  eyeclipse::live] [tick 27] OCR: ーーン
+    きわないね: | primary: きわないね:
+[2026-04-08T11:08:57Z INFO  eyeclipse::live] [tick 28] OCR: 劉合わないね | primary: 劉合わないね
+[2026-04-08T11:08:57Z INFO  eyeclipse::live] [tick 29] OCR: _銀<Y議共ANょ | primary: _銀<Y議共ANょ
+[2026-04-08T11:08:58Z INFO  eyeclipse::live] [tick 30] OCR: こシンしプ
+    _銀まれさ
+    ます、といす | primary: ます、といす
+[2026-04-08T11:08:58Z INFO  eyeclipse::live] [tick 31] OCR: 用いデご
+    視合わないね『 | primary: 視合わないね『
+[2026-04-08T11:08:59Z INFO  eyeclipse::live] [tick 32] OCR: 用きわね
+    ーーだ2症間UE))いといいば』 | primary: ーーだ2症間UE))いといいば』
+[2026-04-08T11:08:59Z INFO  eyeclipse::live] [tick 33] OCR: ーーテレンしプ | primary: ーーテレンしプ
+[2026-04-08T11:09:01Z INFO  eyeclipse::live] [tick 36] OCR: _銀eぁ還 | primary: _銀eぁ還
+[2026-04-08T11:09:02Z INFO  eyeclipse::live] [tick 39] OCR: 嫌いな食べ物はある? | primary: 嫌いな食べ物はある?
+[2026-04-08T11:09:03Z INFO  eyeclipse::live] [tick 40] OCR: 嫌いな食べ物はある?
+    ーーへ | primary: 嫌いな食べ物はある?
+[2026-04-08T11:09:03Z INFO  eyeclipse::live] [tick 40] Text settled after 511ms (instant), translating: 嫌いな食べ物はある?
+[2026-04-08T11:09:03Z INFO  eyeclipse::live] Translation (318ms): Có món ăn nào bạn không thích không?
+[2026-04-08T11:09:03Z INFO  eyeclipse::live] [tick 41] OCR: 嫌いな食べ物はある?
+    Erーー『 | primary: 嫌いな食べ物はある?
+[2026-04-08T11:09:04Z INFO  eyeclipse::live] [tick 42] OCR: 嫌いな食べ物はある? | primary: 嫌いな食べ物はある?
+[2026-04-08T11:09:05Z INFO  eyeclipse::live] [tick 44] OCR: チェュー
+    ンコご
+    ー4レーamsく | primary: ー4レーamsく
+[2026-04-08T11:09:06Z INFO  eyeclipse::live] [tick 46] OCR: 嫌いな食べ物は | primary: 嫌いな食べ物は
+[2026-04-08T11:09:06Z INFO  eyeclipse::live] [tick 47] OCR: 嫌いな食べ物は | primary: 嫌いな食べ物は
+[2026-04-08T11:09:06Z INFO  eyeclipse::live] [tick 47] Text settled after 489ms (instant), translating: 嫌いな食べ物は
+[2026-04-08T11:09:07Z INFO  eyeclipse::live] Translation (316ms): Món ăn mà tôi không thích là
+[2026-04-08T11:09:07Z INFO  eyeclipse::live] [tick 48] OCR: 嫌いな食べ物は
+    ーーPoEさいいい0へで | primary: ーーPoEさいいい0へで
+[2026-04-08T11:09:08Z INFO  eyeclipse::live] [tick 51] OCR: ルンン
+    前春第し頑 | primary: 前春第し頑
+[2026-04-08T11:09:09Z INFO  eyeclipse::live] [tick 52] OCR: _化硝和「 | primary: _化硝和「
+[2026-04-08T11:09:09Z INFO  eyeclipse::live] [tick 53] OCR: ”"[|回較ーー | primary: ”"[|回較ーー
+[2026-04-08T11:09:10Z INFO  eyeclipse::live] [tick 54] OCR: 知ってる?ミミ | primary: 知ってる?ミミ
+[2026-04-08T11:09:10Z INFO  eyeclipse::live] [tick 55] OCR: 孝たデン
+    >知ってる?きミ
+    ・(\い本則me | primary: ・(\い本則me
+[2026-04-08T11:09:11Z INFO  eyeclipse::live] [tick 57] OCR: ろ。ン
+    は野菜だよねそう苦い加
+    ノー【\盾に、3還衝ンー | primary: ノー【\盾に、3還衝ンー
+[2026-04-08T11:09:12Z INFO  eyeclipse::live] [tick 58] OCR: kkン9ブー
+    は野菜だよねそう苦い還
+    rfたつ和生 | primary: は野菜だよねそう苦い還
+[2026-04-08T11:09:12Z INFO  eyeclipse::live] [tick 59] OCR: は野菜だよねそう昔い還
+    4{|Cuに間症半-4と | primary: 4{|Cuに間症半-4と
+[2026-04-08T11:09:13Z INFO  eyeclipse::live] [tick 60] OCR: は野菜だよねそう昔い還
+    ーー!【2所たDoに拉還半-4コ | primary: ーー!【2所たDoに拉還半-4コ
+[2026-04-08T11:09:13Z INFO  eyeclipse::live] [tick 61] OCR: は野菜だよねそう昔い還
+    ーー((iububu還且還還 | primary: ーー((iububu還且還還
+[2026-04-08T11:09:14Z INFO  eyeclipse::live] [tick 62] OCR: 症放ンパン
+    は野菜だよねそう昔い還
+    6。[2Ak還還還有のゴ | primary: 6。[2Ak還還還有のゴ
+[2026-04-08T11:09:14Z INFO  eyeclipse::live] [tick 63] OCR: 人レンパン
+    は野菜だよねそう昔い還
+    レン1【4隊委人0、いあのpe/ | primary: レン1【4隊委人0、いあのpe/
+[2026-04-08T11:09:15Z INFO  eyeclipse::live] [tick 64] OCR: 。るなン
+    は野菜だよねそう苦い還 | primary: は野菜だよねそう苦い還
+[2026-04-08T11:09:15Z INFO  eyeclipse::live] [tick 65] OCR: アンピン
+    は野菜だよねそう苦い回
+    還上只II | primary: は野菜だよねそう苦い回
+[2026-04-08T11:09:16Z INFO  eyeclipse::live] [tick 66] OCR: は野菜だよねそう昔い加
+    ・/|坦還症1 | primary: は野菜だよねそう昔い加
+[2026-04-08T11:09:16Z INFO  eyeclipse::live] [tick 67] OCR: は野菜だよねそう苦い器
+    -】/|壮還拉RIいいーー】 | primary: -】/|壮還拉RIいいーー】
+[2026-04-08T11:09:17Z INFO  eyeclipse::live] [tick 68] OCR: しレンン
+    ga。つEhいいの | primary: ga。つEhいいの
+[2026-04-08T11:09:18Z INFO  eyeclipse::live] [tick 70] OCR: し5コ/パご | primary: し5コ/パご
+[2026-04-08T11:09:18Z INFO  eyeclipse::live] [tick 71] OCR: にャ/パン | primary: にャ/パン
+[2026-04-08T11:09:19Z INFO  eyeclipse::live] [tick 72] OCR: 確かに苦いよね
+    ーーてEDいい貞デーー』. | primary: ーーてEDいい貞デーー』.
+[2026-04-08T11:09:19Z INFO  eyeclipse::live] [tick 73] OCR: 確かに苦いよね
+    ubふか0間間『 | primary: ubふか0間間『
+[2026-04-08T11:09:20Z INFO  eyeclipse::live] [tick 74] OCR: 確かに苦いよね
+    ーーSEノン四員い6UL『1*に | primary: ーーSEノン四員い6UL『1*に
+[2026-04-08T11:09:20Z INFO  eyeclipse::live] [tick 75] OCR: -湖ミミ
+    と倒、
+    ペンてもさ
+    や)、2間ュ | primary: や)、2間ュ
+[2026-04-08T11:09:21Z INFO  eyeclipse::live] [tick 76] OCR: ュー財5M
+    ーー和mw
+    の“<入、
+    のあ有衣ょ。てヽ
+    mrンーtSU敵還.ュ | primary: mrンーtSU敵還.ュ
+[2026-04-08T11:09:21Z INFO  eyeclipse::live] [tick 77] OCR: そうもう一個は
+    "|還還旨昌旨い33 | primary: "|還還旨昌旨い33
+[2026-04-08T11:09:22Z INFO  eyeclipse::live] [tick 78] OCR: そうもう一個は
+    (4和にデ還SGいい生還計3 | primary: (4和にデ還SGいい生還計3
+[2026-04-08T11:09:22Z INFO  eyeclipse::live] [tick 79] OCR: をっう一個は|
+    だやちゃっem | primary: だやちゃっem
+[2026-04-08T11:09:23Z INFO  eyeclipse::live] [tick 80] OCR: のそうもう一個は | primary: のそうもう一個は
+[2026-04-08T11:09:24Z INFO  eyeclipse::live] [tick 82] OCR: レーしいたけ | primary: レーしいたけ
+[2026-04-08T11:09:24Z INFO  eyeclipse::live] [tick 83] OCR: 」しいぎ
+    :レクききたけま | primary: :レクききたけま
+[2026-04-08T11:09:26Z INFO  eyeclipse::live] [tick 87] OCR: しっしいたけき
+    マト際莉や | primary: しっしいたけき
+[2026-04-08T11:09:27Z INFO  eyeclipse::live] [tick 88] OCR: こ爺ご
+    4補アしいたけさ | primary: 4補アしいたけさ
+[2026-04-08T11:09:27Z INFO  eyeclipse::live] [tick 89] OCR: 本【だNE」 | primary: 本【だNE」
+[2026-04-08T11:09:28Z INFO  eyeclipse::live] [tick 90] OCR: アパ、・
+    *【きのこだよね?そう。し!
+    のことWP | primary: *【きのこだよね?そう。し!
+[2026-04-08T11:09:28Z INFO  eyeclipse::live] [tick 91] OCR: ーーダグ信和計、、孝
+    【〔さきのこごだよね?そう。し【
+    。考光のことWS | primary: 【〔さきのこごだよね?そう。し【
+[2026-04-08T11:09:29Z INFO  eyeclipse::live] [tick 92] OCR: ュータグ仙人、ま
+    きのこだよねっ?そう。し
+    。替放のとWSテ | primary: きのこだよねっ?そう。し
+[2026-04-08T11:09:29Z INFO  eyeclipse::live] [tick 93] OCR: ェューーグ馬訟、凡ュまま
+    【〔きのごだよね>?そう。し【
+    _。坦用のこと | primary: 【〔きのごだよね>?そう。し【
+[2026-04-08T11:09:30Z INFO  eyeclipse::live] [tick 94] OCR: ェューグ人生、』
+    【さのこごだよね?そう。し【
+    _替朋のご『 | primary: 【さのこごだよね?そう。し【
+[2026-04-08T11:09:30Z INFO  eyeclipse::live] [tick 95] OCR: ューググ4詳、』
+    【〔きのごだよね?そう。し
+    のこでで. | primary: 【〔きのごだよね?そう。し
+[2026-04-08T11:09:31Z INFO  eyeclipse::live] [tick 96] OCR: レル、1
+    きのこごだよね?そう。し
+    _守のことどジ | primary: きのこごだよね?そう。し
+[2026-04-08T11:09:31Z INFO  eyeclipse::live] [tick 97] OCR: ~ープ<人-
+    【きのこごだよね?そう。し!
+    ーーと得のごこマン | primary: 【きのこごだよね?そう。し!
+[2026-04-08T11:09:32Z INFO  eyeclipse::live] [tick 98] OCR: きのこだよね。?そう。し【
+    >#のごに2 | primary: きのこだよね。?そう。し【
+[2026-04-08T11:09:32Z INFO  eyeclipse::live] [tick 99] OCR: ーィ二
+    【きのこだよね?そう。し
+    ーーょゅ二7のごマー | primary: 【きのこだよね?そう。し
+[2026-04-08T11:09:33Z INFO  eyeclipse::live] [tick 100] OCR: {きのこだよね?そう。し
+    レンンーのごYプ | primary: {きのこだよね?そう。し
+[2026-04-08T11:09:33Z INFO  eyeclipse::live] [tick 101] OCR: 【きのこだよね?そう。し【
+    ーー47簡のこメデ | primary: 【きのこだよね?そう。し【
+[2026-04-08T11:09:34Z INFO  eyeclipse::live] [tick 102] OCR: _/之WっトMu吉 | primary: _/之WっトMu吉
+[2026-04-08T11:09:34Z INFO  eyeclipse::live] [tick 103] OCR: ンー-ン
+    ーー学・ar受 | primary: ーー学・ar受
+[2026-04-08T11:09:35Z INFO  eyeclipse::live] [tick 104] OCR: レン-ン
+    >宮崎」
+    0呈衣さんの」 | primary: 0呈衣さんの」
+[2026-04-08T11:09:35Z INFO  eyeclipse::live] [tick 105] OCR: 吉崎さんの.
+    /だー二和の | primary: /だー二和の
+[2026-04-08T11:09:36Z INFO  eyeclipse::live] [tick 106] OCR: 宮崎さんの
+    Maのーーの | primary: Maのーーの
+[2026-04-08T11:09:36Z INFO  eyeclipse::live] [tick 107] OCR: ルン-ぞ
+    /バ嫌いなものは何?
+    ンコlb、 | primary: /バ嫌いなものは何?
+[2026-04-08T11:09:37Z INFO  eyeclipse::live] [tick 108] OCR: ピンご
+    パパ嫌いなものは何? | primary: パパ嫌いなものは何?
+[2026-04-08T11:09:37Z INFO  eyeclipse::live] [tick 109] OCR: //パ嫌いなものは何?
+    の由、:近0の下 | primary: //パ嫌いなものは何?
+[2026-04-08T11:09:39Z INFO  eyeclipse::live] [tick 112] OCR: の人デ
+    僕の嫌いなものは | primary: 僕の嫌いなものは
+[2026-04-08T11:09:39Z INFO  eyeclipse::live] [tick 113] OCR: 僕のiDさいgg拉 | primary: 僕のiDさいgg拉
+[2026-04-08T11:09:40Z INFO  eyeclipse::live] [tick 114] OCR: 嫌いなものは
+    僕のINSいod人 | primary: 僕のINSいod人
+[2026-04-08T11:09:41Z INFO  eyeclipse::live] [tick 116] OCR: ーレレ)明太子名 | primary: ーレレ)明太子名
+[2026-04-08T11:09:41Z INFO  eyeclipse::live] [tick 117] OCR: ーータグーーン
+    作明太子難 | primary: ーータグーーン
+[2026-04-08T11:09:42Z INFO  eyeclipse::live] [tick 118] OCR: ー汰明太子氏
+    ーーーーへ | primary: ー汰明太子氏
+[2026-04-08T11:09:42Z INFO  eyeclipse::live] [tick 119] OCR: ーーEN、N | primary: ーーEN、N
+[2026-04-08T11:09:44Z INFO  eyeclipse::live] [tick 122] OCR: 胃ンパ=
+    ,明太子なんだ | primary: ,明太子なんだ
+[2026-04-08T11:09:44Z INFO  eyeclipse::live] [tick 123] OCR: 明太子なんだ | primary: 明太子なんだ
+[2026-04-08T11:09:45Z INFO  eyeclipse::live] [tick 124] OCR: 明太子なんだ | primary: 明太子なんだ
+[2026-04-08T11:09:45Z INFO  eyeclipse::live] [tick 124] Text settled after 502ms (appending), translating: 明太子なんだ
+[2026-04-08T11:09:46Z INFO  eyeclipse::live] Translation (877ms): Đó là trứng cá mực
+[2026-04-08T11:09:46Z INFO  eyeclipse::live] [tick 126] OCR: マ少-プ
+    _湖h全、こる | primary: _湖h全、こる
+[2026-04-08T11:09:47Z INFO  eyeclipse::live] [tick 128] OCR: あんない
+    てこ美一
+    あんなに美味しいのに | primary: あんなに美味しいのに
+[2026-04-08T11:09:47Z INFO  eyeclipse::live] [tick 129] OCR: 作デジ
+    あんなに美味しいのに | primary: あんなに美味しいのに
+[2026-04-08T11:09:47Z INFO  eyeclipse::live] [tick 129] Text settled after 520ms (instant), translating: あんない
+    てこ美一
+    あんなに美味しいのに
+[2026-04-08T11:09:48Z INFO  eyeclipse::live] Translation (344ms): Giới thiệu
+    Teiko Ichii
+    Mặc dù ngon đến thế mà
+[2026-04-08T11:09:48Z INFO  eyeclipse::live] [tick 130] OCR: ドンデジ
+    あんなに美味しいのに | primary: あんなに美味しいのに
+[2026-04-08T11:09:49Z INFO  eyeclipse::live] [tick 133] OCR: 中太子を食べる
+    明太子を食べると | primary: 明太子を食べると
+[2026-04-08T11:09:50Z INFO  eyeclipse::live] [tick 134] OCR: 人燈。デ
+    明太子を食べると | primary: 明太子を食べると
+[2026-04-08T11:09:50Z INFO  eyeclipse::live] [tick 134] Text settled after 545ms (instant), translating: 中太子を食べる
+    明太子を食べると
+[2026-04-08T11:09:50Z INFO  eyeclipse::live] Translation (331ms): Ăn trứng cá mực
+    Khi ăn trứng cá mực
+[2026-04-08T11:09:50Z INFO  eyeclipse::live] [tick 135] OCR: 明太子を食べると | primary: 明太子を食べると
+[2026-04-08T11:09:52Z INFO  eyeclipse::live] [tick 138] OCR: レンに
+    ググ内<一 | primary: ググ内<一
+[2026-04-08T11:09:52Z INFO  eyeclipse::live] [tick 139] OCR: シールンとー
+    体がかゆくなるんだよね | primary: 体がかゆくなるんだよね
+[2026-04-08T11:09:53Z INFO  eyeclipse::live] [tick 140] OCR: "てルンっ
+    体がかゆくなるんだよね
+    人EのkVいいいS拓 | primary: 体がかゆくなるんだよね
+[2026-04-08T11:09:53Z INFO  eyeclipse::live] [tick 140] Text settled after 502ms (appending), translating: シールンとー
+    体がかゆくなるんだよね
+[2026-04-08T11:09:53Z INFO  eyeclipse::live] Translation (344ms): Shirun-
+    Cơ thể mình ngứa quá
+[2026-04-08T11:09:53Z INFO  eyeclipse::live] [tick 141] OCR: 体がかゆくなるんだよね
+    。。、、、、 | primary: 体がかゆくなるんだよね
+[2026-04-08T11:09:54Z INFO  eyeclipse::live] [tick 142] OCR: ーーる3芝
+    体がかゆくなるんだよね
+    。、、、 | primary: 体がかゆくなるんだよね
+[2026-04-08T11:09:56Z INFO  eyeclipse::live] [tick 146] OCR: 7湖.っ2ァ
+    _劣k和Gvいいいい | primary: _劣k和Gvいいいい
+[2026-04-08T11:09:56Z INFO  eyeclipse::live] [tick 147] OCR: 還っ4湖」に
+    _竹ES。いいヽ、ヽ、 | primary: _竹ES。いいヽ、ヽ、
+[2026-04-08T11:09:57Z INFO  eyeclipse::live] [tick 148] OCR: 較/パ3の
+    わかるわかるの | primary: わかるわかるの
+[2026-04-08T11:09:57Z INFO  eyeclipse::live] [tick 149] OCR: わかるわかるの | primary: わかるわかるの
+[2026-04-08T11:09:58Z INFO  eyeclipse::live] [tick 150] OCR: わかるわかるの | primary: わかるわかるの
+[2026-04-08T11:09:58Z INFO  eyeclipse::live] [tick 150] Text settled after 998ms (appending), translating: 較/パ3の
+    わかるわかるの
+[2026-04-08T11:09:58Z INFO  eyeclipse::live] Translation (361ms): So sánh/Phần 3
+    Hiểu rồi, hiểu rồi
+[2026-04-08T11:09:58Z INFO  eyeclipse::live] [tick 151] OCR: わかるわかるので
+    。し.生生kkいい生還Ns | primary: 。し.生生kkいい生還Ns
+[2026-04-08T11:09:59Z INFO  eyeclipse::live] [tick 152] OCR: ーーィるテ
+    わかるわかるの | primary: わかるわかるの
+[2026-04-08T11:09:59Z INFO  eyeclipse::live] [tick 153] OCR: ーージレン1=ーー | primary: ーージレン1=ーー
+[2026-04-08T11:10:00Z INFO  eyeclipse::live] [tick 154] OCR: EE湖ー」
+    _靖*、還介さ | primary: _靖*、還介さ
+[2026-04-08T11:10:00Z INFO  eyeclipse::live] [tick 155] OCR: ーーィるデ
+    好きなんでしょ大好き | primary: 好きなんでしょ大好き
+[2026-04-08T11:10:01Z INFO  eyeclipse::live] [tick 156] OCR: デージノパh、SS還
+    好きなんでしょ大好き | primary: 好きなんでしょ大好き
+[2026-04-08T11:10:01Z INFO  eyeclipse::live] [tick 156] Text settled after 519ms (appending), translating: ーーィるデ
+    好きなんでしょ大好き
+[2026-04-08T11:10:01Z INFO  eyeclipse::live] Translation (351ms): ーーィるデ
+    Em thích mà, phải không? Em rất thích mà
+[2026-04-08T11:10:01Z INFO  eyeclipse::live] [tick 157] OCR: 好きなんでしょ大好き | primary: 好きなんでしょ大好き
+[2026-04-08T11:10:02Z INFO  eyeclipse::live] [tick 158] OCR: ーーる
+    好きなんでしょ大好き | primary: 好きなんでしょ大好き
+[2026-04-08T11:10:02Z INFO  eyeclipse::live] [tick 159] OCR: 好きなんでしょ大好き | primary: 好きなんでしょ大好き
+[2026-04-08T11:10:03Z INFO  eyeclipse::live] [tick 160] OCR: ーーンー湖一 | primary: ーーンー湖一
+[2026-04-08T11:10:04Z INFO  eyeclipse::live] [tick 162] OCR: ダ湖ーー
+    レン)に3 | primary: レン)に3
+[2026-04-08T11:10:04Z INFO  eyeclipse::live] [tick 163] OCR: タテレンーー
+    昌和、、、や) | primary: 昌和、、、や)
+[2026-04-08T11:10:05Z INFO  eyeclipse::live] [tick 164] OCR: め。ー清
+    レン富ご
+    4号椅さんの3 | primary: 4号椅さんの3
+[2026-04-08T11:10:05Z INFO  eyeclipse::live] [tick 165] OCR: す。会ー
+    クタ口崎さんの評. | primary: クタ口崎さんの評.
+[2026-04-08T11:10:06Z INFO  eyeclipse::live] [tick 166] OCR: ます「る内ー
+    て宮崎さんのミミ
+    や介昌いいいま | primary: て宮崎さんのミミ
+[2026-04-08T11:10:06Z INFO  eyeclipse::live] [tick 167] OCR: ーーグー
+    滞暗さんのミ. | primary: 滞暗さんのミ.
+[2026-04-08T11:10:07Z INFO  eyeclipse::live] [tick 168] OCR: ーージョンコー
+    レン.受
+    ラーPト生朗守。、NN | primary: ラーPト生朗守。、NN
+[2026-04-08T11:10:07Z INFO  eyeclipse::live] [tick 169] OCR: 'で仕事は何ミ | primary: 'で仕事は何ミ
+[2026-04-08T11:10:08Z INFO  eyeclipse::live] [tick 170] OCR: 仕事は何?
+    ントバ時3條1Sg | primary: ントバ時3條1Sg
+[2026-04-08T11:10:08Z INFO  eyeclipse::live] [tick 171] OCR: ーレパ_ー
+    |仕事は何?言 | primary: |仕事は何?言
+[2026-04-08T11:10:09Z INFO  eyeclipse::live] [tick 172] OCR: X仕事は何?言.
+    の2人8いい | primary: X仕事は何?言.
+[2026-04-08T11:10:09Z INFO  eyeclipse::live] [tick 173] OCR: _全k電NNる | primary: _全k電NNる
+[2026-04-08T11:10:10Z INFO  eyeclipse::live] [tick 174] OCR: 狂伺の仕事はきえ | primary: 狂伺の仕事はきえ
+[2026-04-08T11:10:10Z INFO  eyeclipse::live] [tick 175] OCR: 2導品//ー
+    狂全の仕事はミ. | primary: 狂全の仕事はミ.
+[2026-04-08T11:10:11Z INFO  eyeclipse::live] [tick 176] OCR: す。ると
+    人層の仕事は^、
+    ンー|第還生(buu丘還人還 | primary: ンー|第還生(buu丘還人還
+[2026-04-08T11:10:12Z INFO  eyeclipse::live] [tick 178] OCR: か人湖ャン
+    朋映画監督、
+    ン|還生計1 | primary: ン|還生計1
+[2026-04-08T11:10:12Z INFO  eyeclipse::live] [tick 179] OCR: 2半映画監督、
+    |2旨還生計 | primary: 2半映画監督、
+[2026-04-08T11:10:13Z INFO  eyeclipse::live] [tick 180] OCR: まずーップL3
+    肖映画監督、
+    ンー|と2生生にいは | primary: ンー|と2生生にいは
+[2026-04-08T11:10:13Z INFO  eyeclipse::live] [tick 181] OCR: 陸上ルアー。
+    レレの
+    2映画監督、
+    ン12還PE二生でトー | primary: ン12還PE二生でトー
+[2026-04-08T11:10:14Z INFO  eyeclipse::live] [tick 182] OCR: 「コーィ
+    須。でさ
+    _孝。ぐで | primary: _孝。ぐで
+[2026-04-08T11:10:14Z INFO  eyeclipse::live] [tick 183] OCR: 導だ倒
+    ーー'たし | primary: ーー'たし
+[2026-04-08T11:10:15Z INFO  eyeclipse::live] [tick 184] OCR: アー湖
+    。活mミ
+    プー「衣りいい』いや | primary: プー「衣りいい』いや
+[2026-04-08T11:10:15Z INFO  eyeclipse::live] [tick 185] OCR: アー湖
+    ンー(|人生人 | primary: ンー(|人生人
+[2026-04-08T11:10:16Z INFO  eyeclipse::live] [tick 186] OCR: ーーるン-
+    レンコーJR
+    H「利0れい。削、 | primary: H「利0れい。削、
+[2026-04-08T11:10:17Z INFO  eyeclipse::live] [tick 188] OCR: すしー湖
+    レンバや~ | primary: レンバや~
+[2026-04-08T11:10:17Z INFO  eyeclipse::live] [tick 189] OCR: ょ会ー
+    湖。ミミ
+    のや)|、王いや1 | primary: のや)|、王いや1
+[2026-04-08T11:10:18Z INFO  eyeclipse::live] [tick 190] OCR: 朋すごいね受。
+    ピア議還いい。!.、還ネー1 | primary: ピア議還いい。!.、還ネー1
+[2026-04-08T11:10:18Z INFO  eyeclipse::live] [tick 191] OCR: ューるト一
+    クッごいね会、
+    いい」 | primary: クッごいね会、
+[2026-04-08T11:10:19Z INFO  eyeclipse::live] [tick 192] OCR: 衣しパー
+    ^*すごいでしょ・-。 | primary: ^*すごいでしょ・-。
+[2026-04-08T11:10:19Z INFO  eyeclipse::live] [tick 193] OCR: にすごいでしょ。
+    ン(たァ清還還GU。、症陸て衣内 | primary: ン(たァ清還還GU。、症陸て衣内
+[2026-04-08T11:10:20Z INFO  eyeclipse::live] [tick 194] OCR: >マコ清ン
+    ンレー | primary: >マコ清ン
+[2026-04-08T11:10:20Z INFO  eyeclipse::live] [tick 195] OCR: ーーー
+    映画の監督してるんだ | primary: 映画の監督してるんだ
+[2026-04-08T11:10:21Z INFO  eyeclipse::live] [tick 196] OCR: ーーつ/パ
+    レンど
+    映画の監督してるんだ
+    ン(0に7半還数0。い、本連へ-。計二 | primary: ン(0に7半還数0。い、本連へ-。計二
+[2026-04-08T11:10:21Z INFO  eyeclipse::live] [tick 197] OCR: :因たパーー
+    映画の監督してるんだ
+    時た計 | primary: 映画の監督してるんだ
+[2026-04-08T11:10:22Z INFO  eyeclipse::live] [tick 198] OCR: 映画の監督してるんだ
+    (にで)間野いそ軸座 | primary: (にで)間野いそ軸座
+[2026-04-08T11:10:22Z INFO  eyeclipse::live] [tick 199] OCR: 映画の監督してるんだ | primary: 映画の監督してるんだ
+[2026-04-08T11:10:23Z INFO  eyeclipse::live] [tick 201] OCR: ーー人ーー
+    そう映画を作ってるよ | primary: そう映画を作ってるよ
+[2026-04-08T11:10:24Z INFO  eyeclipse::live] [tick 202] OCR: そう映画を作ってるよ | primary: そう映画を作ってるよ
+[2026-04-08T11:10:24Z INFO  eyeclipse::live] [tick 202] Text settled after 490ms (instant), translating: ーー人ーー
+    そう映画を作ってるよ
+[2026-04-08T11:10:24Z INFO  eyeclipse::live] Translation (389ms): ーーNgườiーー
+    Đúng vậy, tôi đang làm phim đấy
+[2026-04-08T11:10:24Z INFO  eyeclipse::live] [tick 203] OCR: そう映画を作ってるよ | primary: そう映画を作ってるよ
+[2026-04-08T11:10:25Z INFO  eyeclipse::live] [tick 204] OCR: そう映画を作ってるよ
+    。/三間還っ・ | primary: そう映画を作ってるよ
+[2026-04-08T11:10:25Z INFO  eyeclipse::live] [tick 205] OCR: そう映画を作ってるよ | primary: そう映画を作ってるよ
+[2026-04-08T11:10:26Z INFO  eyeclipse::live] [tick 206] OCR: ン/パ一
+    そう映画を作ってるよ. | primary: そう映画を作ってるよ.
+[2026-04-08T11:10:27Z INFO  eyeclipse::live] [tick 208] OCR: ぎ.-人湖ン" | primary: ぎ.-人湖ン"
+[2026-04-08T11:10:27Z INFO  eyeclipse::live] [tick 209] OCR: ババご
+    何の映画を作ってるの? | primary: 何の映画を作ってるの?
+[2026-04-08T11:10:28Z INFO  eyeclipse::live] [tick 210] OCR: 何の映画を作ってるの? | primary: 何の映画を作ってるの?
+[2026-04-08T11:10:28Z INFO  eyeclipse::live] [tick 210] Text settled after 502ms (appending), translating: ババご
+    何の映画を作ってるの?
+[2026-04-08T11:10:28Z INFO  eyeclipse::live] Translation (340ms): Baba-go
+    Cậu đang làm phim gì vậy?
+[2026-04-08T11:10:28Z INFO  eyeclipse::live] [tick 211] OCR: ンパご
+    何の映画を作ってるの?
+    ノしee、 | primary: 何の映画を作ってるの?
+[2026-04-08T11:10:29Z INFO  eyeclipse::live] [tick 212] OCR: レンきご
+    何の映画を作ってるの?
+    ノっ本NRマーー | primary: 何の映画を作ってるの?
+[2026-04-08T11:10:29Z INFO  eyeclipse::live] [tick 213] OCR: 何の映画を作ってるの? | primary: 何の映画を作ってるの?
+[2026-04-08T11:10:30Z INFO  eyeclipse::live] [tick 214] OCR: アーン"
+    ン4生ま2あ0和志。い、Nempe】 | primary: ン4生ま2あ0和志。い、Nempe】
+[2026-04-08T11:10:30Z INFO  eyeclipse::live] [tick 215] OCR: /_中1、一テ
+    4る2。と
+    2代抽、いでvmpw】 | primary: 2代抽、いでvmpw】
+[2026-04-08T11:10:31Z INFO  eyeclipse::live] [tick 216] OCR: アー@画
+    内ヽリアにコ国
+    ンー人際(hh。いまoo | primary: ンー人際(hh。いまoo

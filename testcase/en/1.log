@@ -1,0 +1,242 @@
+[2026-04-08T11:03:13Z INFO  eyeclipse] Eyeclipse starting...
+[2026-04-08T11:03:13Z INFO  eyeclipse] Config loaded: Deepl
+[2026-04-08T11:03:13Z INFO  eyeclipse] Eyeclipse ready. Press Super+Shift+S to capture a region.
+[2026-04-08T11:03:16Z INFO  eyeclipse::hotkey] Hotkey triggered
+[2026-04-08T11:03:16Z INFO  eyeclipse] Capture triggered
+[2026-04-08T11:03:19Z INFO  eyeclipse] Selected region: 1131x184 at (285, 609)
+[2026-04-08T11:03:20Z INFO  eyeclipse::live] [tick 1] OCR: Now, that uncle was, you know, a
+    bit bitter, but he was not wrong. | primary: bit bitter, but he was not wrong.
+[2026-04-08T11:03:20Z INFO  eyeclipse::live] [tick 2] OCR: hae BARE SNOT TPT EE
+    emulate eyeclipse
+    enable
+    . . eyeclipse >> ~/Projects/inspir | primary: . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:03:21Z INFO  eyeclipse::live] [tick 3] OCR: hae BARE SNOT TPT EE
+    emulate eyeclipse
+    enable
+    . . eyeclipse >> ~/Projects/inspir | primary: . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:03:21Z INFO  eyeclipse::live] [tick 6] OCR: hae BARE SNOT TPT EE
+    emulate eyeclipse
+    enable
+    . . eyeclipse >> ~/Projects/inspir | primary: . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:03:21Z INFO  eyeclipse::live] [tick 6] Text settled after 851ms (appending), translating: hae BARE SNOT TPT EE
+    emulate eyeclipse
+    enable
+    . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    ne f
+[2026-04-08T11:03:23Z INFO  eyeclipse::live] Translation (1416ms): hae BARE SNOT TPT EE
+    mô phỏng eyeclipse
+    kích hoạt
+    . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    
+[2026-04-08T11:03:23Z INFO  eyeclipse::live] [tick 7] OCR: Now, that uncle was, you know, a
+    bit bitter, but he was not wrong. | primary: bit bitter, but he was not wrong.
+[2026-04-08T11:03:24Z INFO  eyeclipse::live] [tick 11] OCR: J.log - eyeclipse - Visual Studio Code | primary: J.log - eyeclipse - Visual Studio Code
+[2026-04-08T11:03:24Z INFO  eyeclipse::live] [tick 12] OCR: 26 Kich hoat
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log | primary: 33 [2826-@4-@8T11:03:242 INFO eyeclipse::live] [tick 11] OCR: J.log - eyeclipse 
+[2026-04-08T11:03:25Z INFO  eyeclipse::live] [tick 13] OCR: 26 Kich hoat
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log | primary: 33 [2826-@4-@8T11:03:242 INFO eyeclipse::live] [tick 11] OCR: J.log - eyeclipse 
+[2026-04-08T11:03:25Z INFO  eyeclipse::live] [tick 13] Text settled after 513ms (appending), translating: 26 Kich hoat
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    31 [2026-@4-@8T11:03:23Z INFO eyec
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] Translation (3043ms): 26 Kích hoạt
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    31 [2026-@4-@8T11:03:23Z THÔNG TIN
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] [tick 14] OCR: 26 Kich hoat
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log | primary: 33 [2826-@4-@8T11:03:242 INFO eyeclipse::live] [tick 11] OCR: J.log - eyeclipse 
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] [tick 15] OCR: 2o Kich hoat 1.log - eyeciipse - Visual Studlo Code
+    31  [2026-@4-@8T11:03:23Z IN | primary: 33 [2026-@4-@8T11:03:24Z INFO eyeclipse::live] [tick 11] OCR: J.log - eyeclipse 
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] [tick 16] OCR: We all get to complain
+    about the man, | primary: We all get to complain
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] [tick 17] OCR: We all get to complain
+    about the man, | primary: We all get to complain
+[2026-04-08T11:03:28Z INFO  eyeclipse::live] [tick 18] OCR: We all get to complain
+    about the man, | | primary: We all get to complain
+[2026-04-08T11:03:29Z INFO  eyeclipse::live] [tick 22] OCR: We all get to complain
+    about the man, | primary: We all get to complain
+[2026-04-08T11:03:29Z INFO  eyeclipse::live] [tick 22] Text settled after 813ms (instant), translating: We all get to complain
+    about the man,
+[2026-04-08T11:03:29Z INFO  eyeclipse::live] Translation (370ms): Ai cũng có quyền phàn nàn
+    về ông ta,
+[2026-04-08T11:03:30Z INFO  eyeclipse::live] [tick 23] OCR: and we all have ~
+    debts we got to pay, | primary: debts we got to pay,
+[2026-04-08T11:03:30Z INFO  eyeclipse::live] [tick 24] OCR: andweallhave
+    debts we got to pay, | primary: debts we got to pay,
+[2026-04-08T11:03:31Z INFO  eyeclipse::live] [tick 25] OCR: and we all have
+    debts we got to pay, | primary: debts we got to pay,
+[2026-04-08T11:03:31Z INFO  eyeclipse::live] [tick 25] Text settled after 999ms (appending), translating: and we all have ~
+    debts we got to pay,
+[2026-04-08T11:03:31Z INFO  eyeclipse::live] Translation (399ms): và ai trong chúng ta cũng có ~
+    những khoản nợ phải trả,
+[2026-04-08T11:03:31Z INFO  eyeclipse::live] [tick 26] OCR: and we all have
+    debts we got to pay, | | primary: debts we got to pay, |
+[2026-04-08T11:03:32Z INFO  eyeclipse::live] [tick 27] OCR: and we all have
+    debts we got to pay, | | primary: debts we got to pay, |
+[2026-04-08T11:03:32Z INFO  eyeclipse::live] [tick 28] OCR: and we all have
+    debts we got to pay, | | primary: debts we got to pay, |
+[2026-04-08T11:03:33Z INFO  eyeclipse::live] [tick 30] OCR: and we're all entitled to
+    a day off to lay about. | | primary: a day off to lay about. |
+[2026-04-08T11:03:34Z INFO  eyeclipse::live] [tick 31] OCR: and we're all entitled to
+    a day off to lay about. | primary: and we're all entitled to
+[2026-04-08T11:03:34Z INFO  eyeclipse::live] [tick 32] OCR: and we're all entitled to
+    a day off to lay about. | primary: and we're all entitled to
+[2026-04-08T11:03:34Z INFO  eyeclipse::live] [tick 32] Text settled after 501ms (appending), translating: and we're all entitled to
+    a day off to lay about.
+[2026-04-08T11:03:35Z INFO  eyeclipse::live] Translation (495ms): và ai trong chúng ta cũng có quyền
+    được nghỉ một ngày để nằm ườn ra.
+[2026-04-08T11:03:35Z INFO  eyeclipse::live] [tick 33] OCR: and we're all entitled to
+    a day off to lay about. | primary: and we're all entitled to
+[2026-04-08T11:03:35Z INFO  eyeclipse::live] [tick 34] OCR: and we're all entitled to
+    a day off to lay about. | primary: and we're all entitled to
+[2026-04-08T11:03:36Z INFO  eyeclipse::live] [tick 35] OCR: But the work that is called | primary: But the work that is called
+[2026-04-08T11:03:36Z INFO  eyeclipse::live] [tick 36] OCR: But the work that is called | primary: But the work that is called
+[2026-04-08T11:03:36Z INFO  eyeclipse::live] [tick 36] Text settled after 526ms (appending), translating: But the work that is called
+[2026-04-08T11:03:36Z INFO  eyeclipse::live] Translation (331ms): Nhưng tác phẩm có tên là
+[2026-04-08T11:03:37Z INFO  eyeclipse::live] [tick 37] OCR: But the work that is called | primary: But the work that is called
+[2026-04-08T11:03:38Z INFO  eyeclipse::live] [tick 40] OCR: for that we must do
+    has no expiration date. | primary: has no expiration date.
+[2026-04-08T11:03:39Z INFO  eyeclipse::live] [tick 41] OCR: for that we must do
+    has no expiration date. | primary: has no expiration date.
+[2026-04-08T11:03:39Z INFO  eyeclipse::live] [tick 41] Text settled after 512ms (appending), translating: for that we must do
+    has no expiration date.
+[2026-04-08T11:03:40Z INFO  eyeclipse::live] Translation (888ms): vì điều đó chúng ta phải làm
+    không có hạn sử dụng.
+[2026-04-08T11:03:40Z INFO  eyeclipse::live] [tick 42] OCR: for that we must do
+    has no expiration date. | primary: has no expiration date.
+[2026-04-08T11:03:40Z INFO  eyeclipse::live] [tick 44] OCR: for that we must do
+    has no expiration date. | primary: has no expiration date.
+[2026-04-08T11:03:41Z INFO  eyeclipse::live] [tick 46] OCR: for that we must do
+    has no expiration date. | primary: has no expiration date.
+[2026-04-08T11:03:42Z INFO  eyeclipse::live] [tick 48] OCR: It is the construction of
+    our more perfect union, | primary: It is the construction of
+[2026-04-08T11:03:43Z INFO  eyeclipse::live] [tick 49] OCR: It is the construction of
+    our more perfect union, | primary: It is the construction of
+[2026-04-08T11:03:43Z INFO  eyeclipse::live] [tick 49] Text settled after 496ms (instant), translating: It is the construction of
+    our more perfect union,
+[2026-04-08T11:03:43Z INFO  eyeclipse::live] Translation (493ms): Đó là việc xây dựng
+    một liên minh hoàn hảo hơn của chúng ta,
+[2026-04-08T11:03:45Z INFO  eyeclipse::live] [tick 53] OCR: It is the construction of
+    our more perfect union, | primary: It is the construction of
+[2026-04-08T11:03:45Z INFO  eyeclipse::live] [tick 54] OCR: It is the construction of
+    our more perfect union, | primary: It is the construction of
+[2026-04-08T11:03:46Z INFO  eyeclipse::live] [tick 55] OCR: It is the construction of
+    our more perfect union, | primary: It is the construction of
+[2026-04-08T11:03:47Z INFO  eyeclipse::live] [tick 57] OCR: 26 Kich hoat
+    29 . . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log | primary: 33 [2826-@4-@8T11:03:242 INFO eyeclipse::live] [tick 11] OCR: J.log - eyeclipse 
+[2026-04-08T11:03:47Z INFO  eyeclipse::live] [tick 58] OCR: 39 29. . eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    41  [ | primary: a5 29 evenlinse >> ~/Prniects/inenired/everlinge/teetrace/en/1 Ton | nrimary: 23
+[2026-04-08T11:03:48Z INFO  eyeclipse::live] [tick 59] OCR: 68 [2026-@4-@8T11:03:31Z INFO eyeclipse::live] Translation (399ms}: va ai trong  | primary: 68 [2026-@4-@8T11:03:31Z INFO eyeclipse::live] Translation (399ms}: va ai trong 
+[2026-04-08T11:03:48Z INFO  eyeclipse::live] [tick 60] OCR: 102 khéng cé han si? dung.
+    103 [2826-@4-@8T11:03:402 INFO eyeclipse::live] [tick | primary: 107  [2026-@4-@8T11:03:41Z INFO eyeclipse::live] [tick 46] OCR: for that we must
+[2026-04-08T11:03:49Z INFO  eyeclipse::live] [tick 61] OCR: 118 our more perfect union, | primary: It is the construction of
+    119 [2826-@4-@8 | primary: 419A 20 auenlinca se ~/Drnjecte/inenired/avarlince/tecteaca/en/4 Inn | neimary: 
+[2026-04-08T11:03:49Z INFO  eyeclipse::live] [tick 62] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:03:50Z INFO  eyeclipse::live] [tick 64] Text settled after 920ms (appending), translating: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:03:51Z INFO  eyeclipse::live] Translation (1276ms): CÁC VẤN ĐỀ VỀ OLITPUT, DEBUGCONSOLE, CỔNG TERMINAL, GITLENS, GaAt, OW - ox
+[2026-04-08T11:03:55Z INFO  eyeclipse::live] [tick 73] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:03:55Z INFO  eyeclipse::live] [tick 74] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:03:56Z INFO  eyeclipse::live] [tick 75] OCR: 136  DEBUGCONSCLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPU | primary: 136  DEBUGCONSCLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPU
+[2026-04-08T11:03:56Z INFO  eyeclipse::live] [tick 76] OCR: 136  DEBUGCONSCLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPU | primary: 136  DEBUGCONSCLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPU
+[2026-04-08T11:03:56Z INFO  eyeclipse::live] [tick 76] Text settled after 539ms (appending), translating: 136  DEBUGCONSCLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSCLE TERMINAL PORTS GITLENS Ga
+[2026-04-08T11:03:57Z INFO  eyeclipse::live] Translation (1089ms): 136  Cổng đầu cuối DEBUGCONSCLE GITLENS GaAt OW - ox | chính: LỖI ĐẦU RA CỔNG ĐẦU CUỐI DEBUGCONSCLE GITLENS GaAt O\
+    LỖI 
+[2026-04-08T11:03:57Z INFO  eyeclipse::live] [tick 77] OCR: 136 [2026-64-@8T11:03:552 INFO eyeclipse::live] [tick 74] OCR: PROBLEMS OLITPUT  | primary: 137  [2026-@4-08T11:03:562 INFO eyeclipse::live] [tick 75] OCR: 136 DEBUGCONSCLE
+[2026-04-08T11:03:58Z INFO  eyeclipse::live] [tick 78] OCR: 136 [2026-64-@8T11:03:552 INFO eyeclipse::live] [tick 74] OCR: PROBLEMS OLITPUT  | primary: 139  [2026-04-08T11:03:56Z INFO eyeclipse::live] [tick 76] Text settled after 53
+[2026-04-08T11:03:58Z INFO  eyeclipse::live] [tick 79] OCR: 136 [2026-64-@8T11:03:552 INFO eyeclipse::live] [tick 74] OCR: PROBLEMS OLITPUT  | primary: 139  [2026-04-08T11:03:56Z INFO eyeclipse::live] [tick 76] Text settled after 53
+[2026-04-08T11:03:59Z INFO  eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT DEBUG CONSOLE TERMINAL PORTS GITLENS GaA+ OW ox | primary: PROBLEMS OUTPUT DEBUG CONSOLE TERMINAL PORTS GITLENS GaA+ OW ox
+[2026-04-08T11:03:59Z INFO  eyeclipse::live] [tick 82] OCR: 145 [2026-@4-08T11:03:592 INFO eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT D | primary: 145 [2026-@4-08T11:03:592 INFO eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT D
+[2026-04-08T11:04:00Z INFO  eyeclipse::live] [tick 83] OCR: 145 [2026-@4-08T11:03:592 INFO eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT D | primary: 145 [2026-@4-08T11:03:592 INFO eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT D
+[2026-04-08T11:04:00Z INFO  eyeclipse::live] [tick 83] Text settled after 530ms (appending), translating: 145 [2026-@4-08T11:03:592 INFO eyeclipse::live] [tick 81] OCR: PROBLEMS OUTPUT DEBUG CONSOLE TERMINAL PORTS GITLENS GaA+
+[2026-04-08T11:04:01Z INFO  eyeclipse::live] Translation (1446ms): 145 [2026-@4-08T11:03:592 THÔNG TIN eyeclipse::live] [tick 81] OCR: VẤN ĐỀ ĐẦU RA GHI LỖI BỘ ĐIỀU KHIỂN CỔNG THIẾT BỊ GI
+[2026-04-08T11:04:01Z INFO  eyeclipse::live] [tick 84] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:01Z INFO  eyeclipse::live] [tick 85] OCR: BGG LEREOTMAROOTILD OG OTL INFO BYECIIPSE. - LIVE] TPAanstatlon (A4goms). 249 [A | primary: BGG LEREOTMAROOTILD OG OTL INFO BYECIIPSE. - LIVE] TPAanstatlon (A4goms). 249 [A
+[2026-04-08T11:04:02Z INFO  eyeclipse::live] [tick 86] OCR: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO | primary: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO
+[2026-04-08T11:04:02Z INFO  eyeclipse::live] [tick 87] OCR: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO | primary: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO
+[2026-04-08T11:04:02Z INFO  eyeclipse::live] [tick 88] OCR: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO | primary: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO
+[2026-04-08T11:04:02Z INFO  eyeclipse::live] [tick 88] Text settled after 746ms (appending), translating: BGG LEREO OG OG TLDS OLE ANF BYeciipse. -t1Vve}y Translation (isaoms). 249 [eUCO- PG UG) Ll Googe TNUNG TIN CYeclIpse. -
+[2026-04-08T11:04:03Z INFO  eyeclipse::live] Translation (835ms): BGG LEREO OG OG TLDS OLE ANF BYeclipse. -t1Vve}y Dịch (isaoms). 249 [eUCO- PG UG) Ll Googe TNUNG TIN CYeclIpse. -ilVve| 
+[2026-04-08T11:04:04Z INFO  eyeclipse::live] [tick 89] OCR: BGG P0992 TUNG TIN CYECLIPSe. LIVE} [CICK ot} UR. VAN Er PAU RA Ont LUT BY BIRY  | primary: 154 IF BYeciipse. -tivve}y Translation (isaoms). 249 [eUCO | primary: BGG LEREO 
+[2026-04-08T11:04:04Z INFO  eyeclipse::live] [tick 90] OCR: AGe VE} LTLCK of] OUR. VAN BE PAU RA OL LUT BY BIRY RITEN CONG IMIET Bi 6h
+    150 t | primary: 151  statlon (A4goms). 249 [A | primary: BGG LEREOTMAROOTILD 0G OTL INFO BYECIIP
+[2026-04-08T11:04:05Z INFO  eyeclipse::live] [tick 93] Text settled after 671ms (appending), translating: AGe VE} LTLCK of] OUR. VAN BE PAU RA OL LUT BY BIRY RITEN CONG IMIET Bi 6h
+    150 t OW - ox | primary: PROBLEMS OLITPUT DEB
+[2026-04-08T11:04:06Z INFO  eyeclipse::live] Translation (1110ms): AGe VE} LTLCK của] OUR. VAN BE PAU RA OL LUT BỞI BIRY RITEN CONG IMIET Bi 6h
+    150 t OW - ox | chính: VẤN ĐỀ OLITPUT DEBUG
+[2026-04-08T11:04:06Z INFO  eyeclipse::live] [tick 94] OCR: nen nnn nnn nee ene een nen on none enn eee nee een ee ne enn nn een nn
+    155  [20 | primary: 160  [2026-@4-@8T11:04:05Z INFO eyeclipse::live] [tick 93] Text settled after 67
+[2026-04-08T11:04:07Z INFO  eyeclipse::live] [tick 97] OCR: 169  [2026-04-08T11:04:05Z INFO eyeclipse::live] [tick 93] Text settled after 67 | primary: 164  [2026-04-08T11:04:062 INFO eyeclipse::live] [tick 94] OCR: nen nnn nnn nee 
+[2026-04-08T11:04:07Z INFO  eyeclipse::live] [tick 98] OCR: 165 155 [26 | primary: 166 [2026-@4-@8T11:04:052 INFO eyeclipse::live] [tick 93] | primary: 165 155 [26 | primary: 166 [2026-@4-@8T11:04:052 INFO eyeclipse::live] [tick 93]
+[2026-04-08T11:04:08Z INFO  eyeclipse::live] [tick 99] OCR: 165 155 [26 | primary: 166 [2026-@4-@8T11:04:052 INFO eyeclipse::live] [tick 93] | primary: 165 155 [26 | primary: 166 [2026-@4-@8T11:04:052 INFO eyeclipse::live] [tick 93]
+[2026-04-08T11:04:08Z INFO  eyeclipse::live] [tick 99] Text settled after 524ms (appending), translating: 165 155 [26 | primary: 166 [2026-@4-@8T11:04:052 INFO eyeclipse::live] [tick 93] Text settled after 67
+    PROBLEMS OUTPUT D
+[2026-04-08T11:04:09Z INFO  eyeclipse::live] Translation (1027ms): 165 155 [26 | chính: 166 [2026-@4-@8T11:04:052 THÔNG BÁO eyeclipse::live] [tick 93] Văn bản đã ổn định sau 67
+    VẤN ĐỀ ĐẦU
+[2026-04-08T11:04:09Z INFO  eyeclipse::live] [tick 100] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:14Z INFO  eyeclipse::live] [tick 111] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:15Z INFO  eyeclipse::live] [tick 113] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:15Z INFO  eyeclipse::live] [tick 114] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:16Z INFO  eyeclipse::live] [tick 116] OCR: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox | primary: PROBLEMS OLITPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW - ox
+[2026-04-08T11:04:17Z INFO  eyeclipse::live] [tick 117] OCR: PROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW. ox | primary: PROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS GaAt OW. ox
+[2026-04-08T11:04:17Z INFO  eyeclipse::live] [tick 118] OCR: It's work that is done
+    on multiple job sites | primary: It's work that is done
+[2026-04-08T11:04:18Z INFO  eyeclipse::live] [tick 119] OCR: It's work that is done
+    on multiple job sites | | primary: on multiple job sites |
+[2026-04-08T11:04:18Z INFO  eyeclipse::live] [tick 120] OCR: It's work that is done
+    on multiple job sites | primary: It's work that is done
+[2026-04-08T11:04:19Z INFO  eyeclipse::live] [tick 121] OCR: ingle d | primary: ingle d
+[2026-04-08T11:04:19Z INFO  eyeclipse::live] [tick 122] OCR: every single day, | primary: every single day,
+[2026-04-08T11:04:20Z INFO  eyeclipse::live] [tick 123] OCR: ene catanist-bptce
+    fee extastaner-optcr
+    eM aT eS eyecliose
+    Jclable
+    eyecligve me  | primary: them t] ever iose >> -/Prorerts/i-sairedseyec"inse testease/en 1.02 26!
+[2026-04-08T11:04:20Z INFO  eyeclipse::live] [tick 124] OCR: hae BARE SNOT TPT EE
+    emulate eyeclipse
+    enable
+    eyeclipse >> ~/Projects/inspired/e | primary: eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:04:21Z INFO  eyeclipse::live] [tick 125] OCR: and you can call each of
+    them the battle for truth, _ | primary: them the battle for truth, _
+[2026-04-08T11:04:21Z INFO  eyeclipse::live] [tick 126] OCR: and you can call each of
+    them the battle for truth, | primary: them the battle for truth,
+[2026-04-08T11:04:22Z INFO  eyeclipse::live] [tick 127] OCR: and you can call each of
+    them the battle for truth, _ | primary: them the battle for truth, _
+[2026-04-08T11:04:22Z INFO  eyeclipse::live] [tick 127] Text settled after 986ms (appending), translating: and you can call each of
+    them the battle for truth, _
+[2026-04-08T11:04:22Z INFO  eyeclipse::live] Translation (513ms): và bạn có thể gọi từng
+    cuộc chiến đó là cuộc chiến vì sự thật, _
+[2026-04-08T11:04:22Z INFO  eyeclipse::live] [tick 128] OCR: justice, and the American way. | primary: justice, and the American way.
+[2026-04-08T11:04:23Z INFO  eyeclipse::live] [tick 130] OCR: justice, and the American way. | primary: justice, and the American way.
+[2026-04-08T11:04:23Z INFO  eyeclipse::live] [tick 130] Text settled after 888ms (appending), translating: justice, and the American way.
+[2026-04-08T11:04:23Z INFO  eyeclipse::live] Translation (335ms): công lý và lối sống Mỹ.
+[2026-04-08T11:04:24Z INFO  eyeclipse::live] [tick 131] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:24Z INFO  eyeclipse::live] [tick 132] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:25Z INFO  eyeclipse::live] [tick 133] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:25Z INFO  eyeclipse::live] [tick 133] Text settled after 998ms (appending), translating: Yes, the American way.
+[2026-04-08T11:04:25Z INFO  eyeclipse::live] Translation (341ms): Đúng vậy, theo kiểu Mỹ.
+[2026-04-08T11:04:25Z INFO  eyeclipse::live] [tick 134] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:26Z INFO  eyeclipse::live] [tick 135] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:26Z INFO  eyeclipse::live] [tick 136] OCR: Yes, the American way. | primary: Yes, the American way.
+[2026-04-08T11:04:28Z INFO  eyeclipse::live] [tick 139] OCR: The American way is exampled | primary: The American way is exampled
+[2026-04-08T11:04:28Z INFO  eyeclipse::live] [tick 140] OCR: The American way is exampled | primary: The American way is exampled
+[2026-04-08T11:04:28Z INFO  eyeclipse::live] [tick 140] Text settled after 508ms (instant), translating: The American way is exampled
+[2026-04-08T11:04:28Z INFO  eyeclipse::live] Translation (350ms): Phương thức của người Mỹ được thể hiện qua ví dụ
+[2026-04-08T11:04:29Z INFO  eyeclipse::live] [tick 141] OCR: The American way is exampled | primary: The American way is exampled
+[2026-04-08T11:04:29Z INFO  eyeclipse::live] [tick 142] OCR: The American way is exampled | primary: The American way is exampled
+[2026-04-08T11:04:30Z INFO  eyeclipse::live] [tick 143] OCR: in both plain sight
+    and in subtle attitude. | primary: and in subtle attitude.
+[2026-04-08T11:04:30Z INFO  eyeclipse::live] [tick 144] OCR: hae BARE SNOT TPT EE
+    e emulate eyeclipse
+    enable
+    In Oo eyeclipse >> ~/Projects/in | primary: In Oo eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:04:31Z INFO  eyeclipse::live] [tick 145] OCR: hae BARE SNOT TPT EE
+    e emulate eyeclipse
+    enable
+    In Oo eyeclipse >> ~/Projects/in | primary: In Oo eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+[2026-04-08T11:04:31Z INFO  eyeclipse::live] [tick 146] Text settled after 819ms (appending), translating: hae BARE SNOT TPT EE
+    e emulate eyeclipse
+    enable
+    In Oo eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    
+[2026-04-08T11:04:32Z INFO  eyeclipse::live] Translation (714ms): hae BARE SNOT TPT EE
+    e mô phỏng eyeclipse
+    kích hoạt
+    Trong Oo eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.lo

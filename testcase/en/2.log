@@ -1,0 +1,153 @@
+[2026-04-08T11:04:46Z INFO  eyeclipse] Eyeclipse starting...
+[2026-04-08T11:04:46Z INFO  eyeclipse] Config loaded: Deepl
+[2026-04-08T11:04:46Z INFO  eyeclipse] Eyeclipse ready. Press Super+Shift+S to capture a region.
+[2026-04-08T11:04:49Z INFO  eyeclipse::hotkey] Hotkey triggered
+[2026-04-08T11:04:49Z INFO  eyeclipse] Capture triggered
+[2026-04-08T11:04:51Z INFO  eyeclipse] Selected region: 1033x149 at (356, 656)
+[2026-04-08T11:04:53Z INFO  eyeclipse::live] [tick 1] OCR: cl a -
+    Hello everyone and welcome back
+    to Mr English Channel | primary: Hello everyone and welcome back
+[2026-04-08T11:04:53Z INFO  eyeclipse::live] [tick 2] OCR: Oe Zs -
+    where learning English is easy and
+    f, ms These | primary: where learning English is easy and
+[2026-04-08T11:04:54Z INFO  eyeclipse::live] [tick 6] Text settled after 733ms (appending), translating: Oe Zs -
+    where learning English is easy and
+    f, ms These
+[2026-04-08T11:04:55Z INFO  eyeclipse::live] Translation (1022ms): Oe Zs -
+    nơi học tiếng Anh thật dễ dàng và
+    f, ms Những
+[2026-04-08T11:04:55Z INFO  eyeclipse::live] [tick 7] OCR: where learning English is easy and
+    fun | primary: where learning English is easy and
+[2026-04-08T11:04:55Z INFO  eyeclipse::live] [tick 9] OCR: Oo zs - -
+    I'm Emily hello Emily | primary: I'm Emily hello Emily
+[2026-04-08T11:04:56Z INFO  eyeclipse::live] [tick 11] Text settled after 921ms (appending), translating: Oo zs - -
+    I'm Emily hello Emily
+[2026-04-08T11:04:57Z INFO  eyeclipse::live] Translation (478ms): Vâng, tất nhiên rồi. Chào Emily.
+[2026-04-08T11:04:58Z INFO  eyeclipse::live] [tick 14] OCR: Oo az - -
+    hello everyone it's great to be here | primary: hello everyone it's great to be here
+[2026-04-08T11:04:59Z INFO  eyeclipse::live] [tick 16] Text settled after 904ms (appending), translating: Oo az - -
+    hello everyone it's great to be here
+[2026-04-08T11:04:59Z INFO  eyeclipse::live] Translation (386ms): Oo az - -
+    Xin chào mọi người, thật vui khi được ở đây
+[2026-04-08T11:05:00Z INFO  eyeclipse::live] [tick 19] OCR: od 1 7 | primary: od 1 7
+[2026-04-08T11:05:01Z INFO  eyeclipse::live] [tick 20] OCR: Oo Zz -
+    hi Paul | primary: hi Paul
+[2026-04-08T11:05:01Z INFO  eyeclipse::live] [tick 21] Text settled after 431ms (instant), translating: Oo Zz -
+    hi Paul
+[2026-04-08T11:05:02Z INFO  eyeclipse::live] Translation (501ms): Ôi Zz - là Paul đây
+[2026-04-08T11:05:02Z INFO  eyeclipse::live] [tick 22] OCR: how are you today I'm doing great | primary: how are you today I'm doing great
+[2026-04-08T11:05:02Z INFO  eyeclipse::live] [tick 23] Text settled after 397ms (instant), translating: how are you today I'm doing great
+[2026-04-08T11:05:03Z INFO  eyeclipse::live] Translation (349ms): Hôm nay bạn thế nào? Tôi khỏe lắm.
+[2026-04-08T11:05:04Z INFO  eyeclipse::live] [tick 27] OCR: oe a ~
+    thank you and you | primary: thank you and you
+[2026-04-08T11:05:05Z INFO  eyeclipse::live] [tick 29] Text settled after 923ms (appending), translating: oe a ~
+    thank you and you
+[2026-04-08T11:05:06Z INFO  eyeclipse::live] Translation (344ms): oe a ~
+    cảm ơn bạn
+[2026-04-08T11:05:06Z INFO  eyeclipse::live] [tick 31] OCR: cn, ol i ~
+    you look very happy today | primary: you look very happy today
+[2026-04-08T11:05:07Z INFO  eyeclipse::live] [tick 33] Text settled after 893ms (appending), translating: cn, ol i ~
+    you look very happy today
+[2026-04-08T11:05:08Z INFO  eyeclipse::live] Translation (383ms): cn, ol i ~
+    Hôm nay trông bạn rất vui vẻ
+[2026-04-08T11:05:09Z INFO  eyeclipse::live] [tick 36] OCR: nad sl 7 | primary: nad sl 7
+[2026-04-08T11:05:09Z INFO  eyeclipse::live] [tick 37] OCR: cn, ol sf .
+    haha lam very happy | primary: haha lam very happy
+[2026-04-08T11:05:10Z INFO  eyeclipse::live] [tick 39] Text settled after 922ms (appending), translating: cn, ol sf .
+    haha lam very happy
+[2026-04-08T11:05:11Z INFO  eyeclipse::live] Translation (508ms): cn, ol sf. haha, tớ rất vui.
+[2026-04-08T11:05:12Z INFO  eyeclipse::live] [tick 42] OCR: oo wa 7
+    I'm excited for our topic today | primary: I'm excited for our topic today
+[2026-04-08T11:05:13Z INFO  eyeclipse::live] [tick 44] Text settled after 909ms (appending), translating: oo wa 7
+    I'm excited for our topic today
+[2026-04-08T11:05:13Z INFO  eyeclipse::live] Translation (361ms): oo wa 7
+    Tôi rất hào hứng với chủ đề hôm nay
+[2026-04-08T11:05:15Z INFO  eyeclipse::live] [tick 48] OCR: oh yes | primary: oh yes
+[2026-04-08T11:05:15Z INFO  eyeclipse::live] [tick 49] OCR: it's a very good topic very
+    important | primary: it's a very good topic very
+[2026-04-08T11:05:16Z INFO  eyeclipse::live] [tick 50] Text settled after 410ms (instant), translating: it's a very good topic very
+    important
+[2026-04-08T11:05:16Z INFO  eyeclipse::live] Translation (355ms): Đó là một chủ đề rất hay và rất
+    quan trọng
+[2026-04-08T11:05:19Z INFO  eyeclipse::live] [tick 57] OCR: nl L J _ _
+    yes exactly | primary: yes exactly
+[2026-04-08T11:05:20Z INFO  eyeclipse::live] [tick 58] Text settled after 424ms (instant), translating: nl L J _ _
+    yes exactly
+[2026-04-08T11:05:20Z INFO  eyeclipse::live] Translation (328ms): nl L J _ _
+    đúng rồi
+[2026-04-08T11:05:21Z INFO  eyeclipse::live] [tick 60] OCR: oo Zw - 7
+    but before we start everyone | primary: but before we start everyone
+[2026-04-08T11:05:22Z INFO  eyeclipse::live] [tick 62] Text settled after 915ms (appending), translating: oo Zw - 7
+    but before we start everyone
+[2026-04-08T11:05:22Z INFO  eyeclipse::live] Translation (367ms): oo Zw - 7
+    nhưng trước khi bắt đầu, mọi người
+[2026-04-08T11:05:23Z INFO  eyeclipse::live] [tick 65] OCR: LO ss ~
+    please remember to subscribe to
+    our channel | primary: please remember to subscribe to
+[2026-04-08T11:05:24Z INFO  eyeclipse::live] [tick 66] OCR: 31 Xin chao moi nguvi, that vui khi duoc & day
+    32 [2026-04-@8T11:05:00Z INFO eye | primary: 32 [2026-04-@8T11:05:00Z INFO eyeclipse::live] [tick 19] OCR: od 17 | primary: o
+[2026-04-08T11:05:24Z INFO  eyeclipse::live] [tick 67] OCR: 57 haha lam very happy
+    58  [2026-04-@8T11:05:11Z INFO eyeclipse::live] Translati | primary: 58  [2026-04-@8T11:05:11Z INFO eyeclipse::live] Translation (508ms}: cn, ol sf. 
+[2026-04-08T11:05:25Z INFO  eyeclipse::live] [tick 68] OCR: 89  [2026-04-@8T11:05:24Z INFO eyeclipse::live] [tick 67] OCR: 57 haha lam very  | primary: 89  [2026-04-@8T11:05:24Z INFO eyeclipse::live] [tick 67] OCR: 57 haha lam very 
+[2026-04-08T11:05:25Z INFO  eyeclipse::live] [tick 69] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:26Z INFO  eyeclipse::live] [tick 71] Text settled after 919ms (appending), translating: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:27Z INFO  eyeclipse::live] Translation (889ms): VẤN ĐỀ VỀ ĐẦU RA, BẢNG ĐIỀU KHIỂN GỠ LỖI, CỔNG THIẾT BỊ ĐẦU CUỐI VÀ GITLENS. GA OW. 2
+[2026-04-08T11:05:30Z INFO  eyeclipse::live] [tick 79] OCR: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2 | primary: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2
+[2026-04-08T11:05:31Z INFO  eyeclipse::live] [tick 80] OCR: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2 | primary: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2
+[2026-04-08T11:05:31Z INFO  eyeclipse::live] [tick 81] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:41Z INFO  eyeclipse::live] [tick 101] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:42Z INFO  eyeclipse::live] [tick 102] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:43Z INFO  eyeclipse::live] [tick 105] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:44Z INFO  eyeclipse::live] [tick 106] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:45Z INFO  eyeclipse::live] [tick 109] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:46Z INFO  eyeclipse::live] [tick 110] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:05:46Z INFO  eyeclipse::live] [tick 111] OCR: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2 | primary: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2
+[2026-04-08T11:05:55Z INFO  eyeclipse::live] [tick 128] OCR: @2  [2026-04-@8711:05:45Z INFO eyeclipse::live] [tick 169] OCR: ROBLEMS OUTPUT D | primary: @3  [2026-@4-@8T11:05:46Z INFO eyeclipse::live] [tick 118] OCR: ROBLEMS OUTPUT D
+[2026-04-08T11:05:55Z INFO  eyeclipse::live] [tick 129] OCR: @2  [2026-04-@8711:05:45Z INFO eyeclipse::live] [tick 169] OCR: ROBLEMS OUTPUT D | primary: @3  [2026-04-@8711:05:46Z INFO eyeclipse::live] [tick 118] OCR: ROBLEMS OUTPUT D
+[2026-04-08T11:05:55Z INFO  eyeclipse::live] [tick 129] Text settled after 530ms (appending), translating: @2  [2026-04-@8711:05:45Z INFO eyeclipse::live] [tick 169] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA 0
+[2026-04-08T11:05:57Z INFO  eyeclipse::live] Translation (1515ms): @2  [2026-04-@8711:05:45Z THÔNG BÁO eyeclipse::live] [tick 169] OCR: LỖI KHI XUẤT RA CỔNG TERMINAL CỦA DEBUGCONSOLE GITL
+[2026-04-08T11:05:57Z INFO  eyeclipse::live] [tick 130] OCR: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2 | primary: ROBLEMS  QUTPUT DEBUGCONSOLE TERMINAL PORTS ~_GITLENS. GeAt OW. 2
+[2026-04-08T11:05:59Z INFO  eyeclipse::live] [tick 137] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:06:00Z INFO  eyeclipse::live] [tick 138] OCR: 19 ie::1ive] [tick 137] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. | primary: 19 ie::1ive] [tick 137] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS.
+[2026-04-08T11:06:00Z INFO  eyeclipse::live] [tick 139] OCR: 19 DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUG | primary: 11 {tick 137] OCR: ROBLEMS GUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. | primary
+[2026-04-08T11:06:01Z INFO  eyeclipse::live] [tick 140] OCR: 19 "NAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL  | primary: 12 (TLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUG | primary: 11 {tick 137] OCR
+[2026-04-08T11:06:01Z INFO  eyeclipse::live] [tick 141] OCR: 19 W. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+     | primary: 12 ry: ROBLEMS OUTPUT DEBUG | primary: 11 {tick 137] OCR: ROBLEMS GUTPUT DEBUGCO
+[2026-04-08T11:06:02Z INFO  eyeclipse::live] [tick 143] OCR: 19 i-@4-08T11:05:59Z INFO eyeclipse::live] [tick 137] OCR: ROBLEMS OUTPUT DEBUGC | primary: 13 i-@4-@8T11:96:01Z INFO eyeclipse::live] [tick 146] OCR: 19 "NAL PORTS GITLENS
+[2026-04-08T11:06:03Z INFO  eyeclipse::live] [tick 145] OCR: 19 i-@4-08T11:05:59Z INFO eyeclipse::live] [tick 137] OCR: ROBLEMS OUTPUT DEBUGC | primary: 13 i-@4-@8T11:96:01Z INFO eyeclipse::live] [tick 146] OCR: 19 "NAL PORTS GITLENS
+[2026-04-08T11:06:03Z INFO  eyeclipse::live] [tick 145] Text settled after 999ms (appending), translating: 19 i-@4-08T11:05:59Z INFO eyeclipse::live] [tick 137] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+    
+[2026-04-08T11:06:05Z INFO  eyeclipse::live] Translation (1301ms): 19 i-@4-08T11:05:59Z THÔNG TIN eyeclipse::live] [tick 137] OCR: VẤN ĐỀ VỚI CỔNG THỐNG KÊ GITLENS. GA OW. 2
+    11 i-@4-@8T11
+[2026-04-08T11:06:05Z INFO  eyeclipse::live] [tick 146] OCR: 15 | primary: 12 ry: ROBLEMS OUTPUT DEBUG | primary: 11 {tick 137] OCR: ROBLEMS  | primary: 18 i-@4-@8T11:06:03Z INFO eyeclipse::live] [tick 145] Text settled after 999ms (
+[2026-04-08T11:06:06Z INFO  eyeclipse::live] [tick 150] Text settled after 831ms (appending), translating: 15 | primary: 12 ry: ROBLEMS OUTPUT DEBUG | primary: 11 {tick 137] OCR: ROBLEMS GUTPUT DEBUGCO
+    16 i-@4-@8T11:06:02Z INFO
+[2026-04-08T11:06:07Z INFO  eyeclipse::live] Translation (1026ms): 15 | chính: 12 ry: VẤN ĐỀ ĐẦU RA GỠ LỖI | chính: 11 {tick 137] OCR: VẤN ĐỀ ĐẦU RA GỠ LỖI
+    16 i-@4-@8T11:06:02Z THÔNG TIN 
+[2026-04-08T11:06:07Z INFO  eyeclipse::live] [tick 153] OCR: 20 i-@4-O8T11:06:052 INFO eyeclipse:-live] Translation (1301mS): 19 1-@4-68711:0 | primary: 20 i-@4-O8T11:06:052 INFO eyeclipse:-live] Translation (1301mS): 19 1-@4-68711:0
+[2026-04-08T11:06:08Z INFO  eyeclipse::live] [tick 154] OCR: NN NIE I EE IID LOL IL EID NI IIEDIOOS fe IRE | NEIIIII AE DF EREEIO NIOLE INOS  | primary: 27 i-@4-@8T11:06:072Z INFO eyeclipse::live] [tick 153] OCR: 20 i-@4-08711:06:052
+[2026-04-08T11:06:08Z INFO  eyeclipse::live] [tick 155] OCR: NN NIE I EE IID LOL IL EID NI IIEDIOOS fe IRE | NEIIIII AE DF EREEIO NIOLE INOS  | primary: 28 i-@4-@8T11:06:08Z INFO eyeclipse::live] [tick 154] OCR: NN NIE I EE IID LOL I
+[2026-04-08T11:06:09Z INFO  eyeclipse::live] [tick 156] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:06:11Z INFO  eyeclipse::live] [tick 160] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+[2026-04-08T11:06:11Z INFO  eyeclipse::live] [tick 161] OCR: 31 [tick 168] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2  | primary: 31 [tick 168] OCR: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 
+[2026-04-08T11:06:12Z INFO  eyeclipse::live] [tick 162] OCR: 31 5 OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUT | primary: 31 5 OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUT
+[2026-04-08T11:06:12Z INFO  eyeclipse::live] [tick 163] OCR: 31 JAL PORTS GITLENS. GA OW. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL P | primary: 33 PORTS GITLENS. GA OW. 2 | primary: ROBLES OUT | primary: 31 5 OUTPUT DEBUGCON
+[2026-04-08T11:06:13Z INFO  eyeclipse::live] [tick 164] OCR: 31 W. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+     | primary: 33 2 | primary: ROBLEMS OUT | primary: 34 5 OUTPUT DEBUGCONSOLE TERMINAL PORTS G
+[2026-04-08T11:06:14Z INFO  eyeclipse::live] [tick 166] Text settled after 835ms (appending), translating: 31 W. 2 | primary: ROBLEMS OUTPUT DEBUGCONSOLE TERMINAL PORTS GITLENS. GA OW. 2
+    32 PORTS GITLENS. GA OW. 2 | primary: 34
+[2026-04-08T11:06:15Z INFO  eyeclipse::live] Translation (1626ms): 31 W. 2 | chính: LỖI ĐẦU RA BẢNG ĐIỀU KHIỂN GỊA THIẾT BỊ KẾT NỐI GITLENS. GA OW. 2
+    32 CỔNG GITLENS. GA OW. 2 | chính: 34
+[2026-04-08T11:06:16Z INFO  eyeclipse::live] [tick 167] OCR: 31 [2026-@4-@8T11:06:41Z INFO eyeclipse::live] [tick 168] OCR: ROBLEMS OUTPUT DE | primary: 33 [2026-@4-@8T11:06:12Z INFO eyeclipse::live] [tick 162] OCR: 34 5 OUTPUT DEBUG
+[2026-04-08T11:06:16Z INFO  eyeclipse::live] [tick 171] OCR: ad a -
+    how about you start Paul tell me
+    AAAI UAL KeAlf
+    ae UnsyywuUuel yvul Vu 7  | primary: how about you start Paul tell me
+[2026-04-08T11:06:17Z INFO  eyeclipse::live] [tick 172] OCR: ad a -
+    how about you start Paul tell me
+    AAAI UAL KeAlf
+    ae UnsyywuUuel yvurowl o  | primary: ae UnsyywuUuel yvurowl o 4 ae io
+[2026-04-08T11:06:17Z INFO  eyeclipse::live] [tick 173] OCR: how about you start Paul tell me
+    about yourself | primary: how about you start Paul tell me
+[2026-04-08T11:06:18Z INFO  eyeclipse::live] [tick 174] OCR: a eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61
+    eyeclipse >> | primary: a eyeclipse >> ~/Projects/inspired/eyeclipse/testcase/en/1.log 2>61

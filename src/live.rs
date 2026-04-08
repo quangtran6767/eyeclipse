@@ -1,5 +1,6 @@
 use anyhow::Result;
 use image::DynamicImage;
+use std::collections::VecDeque;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -12,11 +13,62 @@ use crate::ocr;
 use crate::selector::Region;
 use crate::translate::TranslationBackendDyn;
 
-/// Minimum character count for OCR text to be worth translating.
-const MIN_TEXT_LEN: usize = 5;
+/// Per-language tuning profile for OCR settle logic.
+/// CJK and Latin scripts have different characteristics:
+/// - CJK subtitles tend to stay on screen longer and OCR is noisier
+/// - Latin subtitles change faster but OCR is more confident
+pub struct LanguageProfile {
+    /// How many consecutive OCR readings must agree before we consider text stable.
+    pub required_agreements: usize,
+    /// Minimum OCR confidence to accept a reading.
+    pub min_confidence: i32,
+    /// Minimum time (ms) text must be stable before translating.
+    pub min_settle_ms: u128,
+    /// How similar consecutive OCR readings must be to count as "agreeing" (0.0-1.0).
+    pub consecutive_agreement_threshold: f64,
+    /// If two texts are this similar, skip re-translation (0.0-1.0).
+    pub similarity_threshold: f64,
+    /// Minimum character count for OCR text to be worth translating.
+    pub min_text_len: usize,
+}
 
-/// Similarity threshold (0.0-1.0). If two texts are this similar, skip re-translation.
-const SIMILARITY_THRESHOLD: f64 = 0.80;
+impl LanguageProfile {
+    /// Profile for CJK languages (Japanese, Chinese, Korean).
+    /// More agreements required because OCR is noisier.
+    pub fn cjk() -> Self {
+        Self {
+            required_agreements: 3,
+            min_confidence: 30,
+            min_settle_ms: 500,
+            consecutive_agreement_threshold: 0.90,
+            similarity_threshold: 0.80,
+            min_text_len: 5,
+        }
+    }
+
+    /// Profile for Latin-script languages (English, French, Vietnamese, etc.).
+    /// Fewer agreements needed — subtitles change faster and OCR is more reliable.
+    pub fn latin() -> Self {
+        Self {
+            required_agreements: 2,
+            min_confidence: 50,
+            min_settle_ms: 400,
+            consecutive_agreement_threshold: 0.90,
+            similarity_threshold: 0.80,
+            min_text_len: 5,
+        }
+    }
+
+    /// Auto-detect the right profile from the OCR language string.
+    #[cfg(feature = "ocr")]
+    pub fn detect(ocr_lang: &str) -> Self {
+        if ocr::is_cjk_lang(ocr_lang) {
+            Self::cjk()
+        } else {
+            Self::latin()
+        }
+    }
+}
 
 /// Truncate a string to at most `max` characters, respecting char boundaries.
 fn truncate_chars(s: &str, max: usize) -> &str {
@@ -31,9 +83,21 @@ fn normalize(s: &str) -> String {
     s.split_whitespace().collect::<Vec<_>>().join(" ").to_lowercase()
 }
 
+/// Extract the longest substantive line for change detection.
+/// Short OCR noise lines (furigana, artifacts) are ignored so they
+/// don't disrupt settle-time tracking.
+fn extract_primary_line(text: &str, min_text_len: usize) -> String {
+    text.lines()
+        .map(|l| l.trim())
+        .filter(|l| l.chars().count() >= min_text_len)
+        .max_by_key(|l| l.chars().count())
+        .unwrap_or("")
+        .to_string()
+}
+
 /// Compute similarity ratio between two strings (0.0 = completely different, 1.0 = identical).
 /// Uses longest common subsequence ratio — fast enough for short subtitle strings.
-fn similarity(a: &str, b: &str) -> f64 {
+fn similarity(a: &str, b: &str, threshold: f64) -> f64 {
     if a == b {
         return 1.0;
     }
@@ -48,7 +112,7 @@ fn similarity(a: &str, b: &str) -> f64 {
     // Quick length-based rejection
     let max_len = m.max(n);
     let min_len = m.min(n);
-    if (min_len as f64 / max_len as f64) < SIMILARITY_THRESHOLD {
+    if (min_len as f64 / max_len as f64) < threshold {
         return min_len as f64 / max_len as f64;
     }
 
@@ -77,20 +141,28 @@ pub async fn start_live_monitor(
     target_lang: &str,
     backend: &dyn TranslationBackendDyn,
     interval_ms: u64,
-    settle_time_ms: u64,
     stop_signal: &AtomicBool,
     translated_text: &Arc<Mutex<String>>,
 ) -> Result<()> {
-    let settle_time = settle_time_ms as u128;
     let mut prev_image: Option<DynamicImage> = None;
     let diff_threshold: u8 = 10;
     let change_ratio: f64 = 0.01;
 
-    // Text settling state
-    let mut current_ocr_normalized: Option<String> = None;
-    let mut current_ocr_raw: Option<String> = None;
-    let mut text_last_changed: Instant = Instant::now();
-    let mut text_settled: bool = false;
+    #[cfg(feature = "ocr")]
+    let profile = LanguageProfile::detect(ocr_lang);
+    #[cfg(not(feature = "ocr"))]
+    let profile = LanguageProfile::latin();
+
+    // Recent OCR readings for consecutive agreement check (primary line only, for change detection)
+    let mut recent_readings: VecDeque<String> = VecDeque::new();
+    // The full OCR text corresponding to the latest stable reading (sent to translation)
+    let mut full_text_for_translation: String = String::new();
+    // When the current "group" of similar readings started
+    let mut group_start: Instant = Instant::now();
+    // The last text that was actually sent for translation (normalized)
+    let mut last_translated_normalized: Option<String> = None;
+    // Already translated this stable group?
+    let mut group_translated: bool = false;
     // Track the last few translated texts for fuzzy dedup
     let mut translated_history: Vec<String> = Vec::new();
 
@@ -127,21 +199,26 @@ pub async fn start_live_monitor(
         };
 
         if !changed {
-            // Image didn't change — but check if we have settled text waiting to translate
-            if !text_settled {
-                if let Some(ref norm) = current_ocr_normalized {
-                    let elapsed = text_last_changed.elapsed().as_millis();
-                    if elapsed >= settle_time {
-                        if !is_duplicate(norm, &translated_history) {
-                            let raw = current_ocr_raw.as_deref().unwrap_or(norm);
-                            log::info!("[tick {}] Text settled after {}ms, translating: {}",
-                                tick_count, elapsed, truncate_chars(raw, 120));
-                            do_translate(backend, raw, source_lang, target_lang, translated_text, &mut translated_history).await;
-                        } else {
-                            log::debug!("[tick {}] Skipping duplicate text", tick_count);
-                        }
-                        text_settled = true;
+            // Image unchanged — check if we should translate the stable group
+            if !group_translated && recent_readings.len() >= profile.required_agreements {
+                let elapsed = group_start.elapsed().as_millis();
+                if elapsed >= profile.min_settle_ms {
+                    // All recent readings agree and enough time has passed
+                    let to_translate = if full_text_for_translation.is_empty() {
+                        recent_readings.back().unwrap().clone()
+                    } else {
+                        full_text_for_translation.clone()
+                    };
+                    if !is_duplicate(&to_translate, &translated_history, profile.similarity_threshold) {
+                        log::info!("[tick {}] Text stable ({} agreements, {}ms), translating: {}",
+                            tick_count, recent_readings.len(), elapsed,
+                            truncate_chars(&to_translate, 120));
+                        do_translate(backend, &to_translate, source_lang, target_lang, translated_text, &mut translated_history).await;
+                        last_translated_normalized = Some(normalize(&to_translate));
+                    } else {
+                        log::debug!("[tick {}] Skipping duplicate stable text", tick_count);
                     }
+                    group_translated = true;
                 }
             }
             continue;
@@ -151,12 +228,11 @@ pub async fn start_live_monitor(
 
         // OCR
         #[cfg(feature = "ocr")]
-        let text = match ocr::extract_text(&current, ocr_lang) {
-            Ok(t) if !t.is_empty() => t,
+        let ocr_result = match ocr::extract_text(&current, ocr_lang) {
+            Ok(r) if !r.text.is_empty() => r,
             Ok(_) => {
-                current_ocr_normalized = None;
-                current_ocr_raw = None;
-                text_settled = false;
+                recent_readings.clear();
+                group_translated = false;
                 continue;
             }
             Err(e) => {
@@ -171,39 +247,89 @@ pub async fn start_live_monitor(
             break;
         }
 
-        // Skip garbage / too-short OCR
-        let normalized = normalize(&text);
-        if normalized.len() < MIN_TEXT_LEN {
-            continue;
-        }
+        #[cfg(feature = "ocr")]
+        {
+            // Confidence check
+            if ocr_result.confidence < profile.min_confidence {
+                log::debug!("[tick {}] Low confidence ({}), skipping", tick_count, ocr_result.confidence);
+                continue;
+            }
 
-        log::info!("[tick {}] OCR: {}", tick_count, truncate_chars(&text, 120));
+            // Garbage check
+            if ocr::is_garbage_text(&ocr_result.text) {
+                log::debug!("[tick {}] Garbage text detected, skipping", tick_count);
+                continue;
+            }
 
-        // Compare normalized text to detect changes (handles OCR jitter like "aman" vs "a man")
-        let text_changed = match &current_ocr_normalized {
-            Some(prev) => similarity(prev, &normalized) < 0.95,
-            None => true,
-        };
+            let text = &ocr_result.text;
 
-        if text_changed {
-            current_ocr_normalized = Some(normalized);
-            current_ocr_raw = Some(text);
-            text_last_changed = Instant::now();
-            text_settled = false;
-        } else {
-            // Same text — check if settled
-            let elapsed = text_last_changed.elapsed().as_millis();
-            if !text_settled && elapsed >= settle_time {
-                let norm = current_ocr_normalized.as_ref().unwrap();
-                if !is_duplicate(norm, &translated_history) {
-                    let raw = current_ocr_raw.as_deref().unwrap_or(norm);
-                    log::info!("[tick {}] Text settled after {}ms, translating: {}",
-                        tick_count, elapsed, truncate_chars(raw, 120));
-                    do_translate(backend, raw, source_lang, target_lang, translated_text, &mut translated_history).await;
-                } else {
-                    log::debug!("[tick {}] Skipping duplicate text", tick_count);
+            // Extract primary line for change detection (longest substantive line)
+            let primary = extract_primary_line(text, profile.min_text_len);
+            if primary.chars().count() < profile.min_text_len {
+                continue;
+            }
+
+            // Strip leading noise for comparison
+            let cleaned = ocr::strip_leading_noise(&primary);
+            if cleaned.chars().count() < profile.min_text_len {
+                continue;
+            }
+
+            log::info!("[tick {}] OCR (conf={}): {}", tick_count,
+                ocr_result.confidence, truncate_chars(text, 120));
+
+            let normalized = normalize(cleaned);
+
+            // Check if this reading agrees with recent readings
+            let agrees_with_recent = recent_readings.back()
+                .map(|prev| similarity(&normalize(prev), &normalized, profile.consecutive_agreement_threshold) >= profile.consecutive_agreement_threshold)
+                .unwrap_or(false);
+
+            if agrees_with_recent {
+                // Agreeing reading — add to the group
+                recent_readings.push_back(cleaned.to_string());
+                full_text_for_translation = text.clone();
+                // Keep buffer bounded
+                if recent_readings.len() > profile.required_agreements + 2 {
+                    recent_readings.pop_front();
                 }
-                text_settled = true;
+            } else {
+                // New/different text — reset the group
+                recent_readings.clear();
+                recent_readings.push_back(cleaned.to_string());
+                full_text_for_translation = text.clone();
+                group_start = Instant::now();
+                group_translated = false;
+
+                // Check if this is genuinely different from what we last translated
+                if let Some(ref last) = last_translated_normalized {
+                    if similarity(last, &normalized, profile.consecutive_agreement_threshold) >= profile.consecutive_agreement_threshold {
+                        // Same as what we already translated — mark as done
+                        group_translated = true;
+                    }
+                }
+            }
+
+            // Check if we have enough agreements + settle time
+            if !group_translated && recent_readings.len() >= profile.required_agreements {
+                let elapsed = group_start.elapsed().as_millis();
+                if elapsed >= profile.min_settle_ms {
+                    let to_translate = if full_text_for_translation.is_empty() {
+                        recent_readings.back().unwrap().clone()
+                    } else {
+                        full_text_for_translation.clone()
+                    };
+                    if !is_duplicate(&to_translate, &translated_history, profile.similarity_threshold) {
+                        log::info!("[tick {}] Text stable ({} agreements, {}ms), translating: {}",
+                            tick_count, recent_readings.len(), elapsed,
+                            truncate_chars(&to_translate, 120));
+                        do_translate(backend, &to_translate, source_lang, target_lang, translated_text, &mut translated_history).await;
+                        last_translated_normalized = Some(normalize(&to_translate));
+                    } else {
+                        log::debug!("[tick {}] Skipping duplicate stable text", tick_count);
+                    }
+                    group_translated = true;
+                }
             }
         }
     }
@@ -212,8 +338,8 @@ pub async fn start_live_monitor(
 }
 
 /// Check if normalized text is too similar to any recently translated text.
-fn is_duplicate(normalized: &str, history: &[String]) -> bool {
-    history.iter().any(|prev| similarity(prev, normalized) >= SIMILARITY_THRESHOLD)
+fn is_duplicate(normalized: &str, history: &[String], threshold: f64) -> bool {
+    history.iter().any(|prev| similarity(prev, normalized, threshold) >= threshold)
 }
 
 async fn do_translate(

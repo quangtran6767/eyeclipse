@@ -1,0 +1,171 @@
+[2026-04-08T11:07:20Z INFO  eyeclipse] Eyeclipse starting...
+[2026-04-08T11:07:20Z INFO  eyeclipse] Config loaded: Deepl
+[2026-04-08T11:07:20Z INFO  eyeclipse] Eyeclipse ready. Press Super+Shift+S to capture a region.
+[2026-04-08T11:07:22Z INFO  eyeclipse] Opening settings GUI
+[2026-04-08T11:07:22Z INFO  eyeclipse::settings] Detected Tesseract languages: ["eng", "jpn", "osd"]
+[2026-04-08T11:07:24Z INFO  eyeclipse::settings] Settings saved
+[2026-04-08T11:07:24Z INFO  eyeclipse] Config reloaded after settings change
+[2026-04-08T11:07:26Z INFO  eyeclipse] Eyeclipse starting...
+[2026-04-08T11:07:26Z INFO  eyeclipse] Config loaded: Deepl
+[2026-04-08T11:07:26Z INFO  eyeclipse] Eyeclipse ready. Press Super+Shift+S to capture a region.
+[2026-04-08T11:07:28Z INFO  eyeclipse::hotkey] Hotkey triggered
+[2026-04-08T11:07:28Z INFO  eyeclipse] Capture triggered
+[2026-04-08T11:07:31Z INFO  eyeclipse] Selected region: 630x187 at (546, 541)
+[2026-04-08T11:07:32Z INFO  eyeclipse::live] [tick 1] OCR: ノン(門まのad | primary: ノン(門まのad
+[2026-04-08T11:07:33Z INFO  eyeclipse::live] [tick 2] OCR: にんプ
+    7な食べ物か
+    ン|まる1な生還 | primary: ン|まる1な生還
+[2026-04-08T11:07:33Z INFO  eyeclipse::live] [tick 6] OCR: っエル
+    ーグこき
+    ロPEにコ
+    芝生、' | primary: ロPEにコ
+[2026-04-08T11:07:35Z INFO  eyeclipse::live] [tick 9] OCR: ー宅ー
+    ニつあるんだ | primary: ニつあるんだ
+[2026-04-08T11:07:35Z INFO  eyeclipse::live] [tick 10] OCR: 3ルトフ
+    二つあるんだ
+    間、う」|op3 | primary: 間、う」|op3
+[2026-04-08T11:07:36Z INFO  eyeclipse::live] [tick 11] OCR: 二つあるんだ
+    、(|知生に3 | primary: 、(|知生に3
+[2026-04-08T11:07:36Z INFO  eyeclipse::live] [tick 12] OCR: ーーつあるんだ
+    いい』電 | primary: ーーつあるんだ
+[2026-04-08T11:07:37Z INFO  eyeclipse::live] [tick 13] OCR: ary:一ごつあるんだ | primary: ary:一ごつあるんだ
+[2026-04-08T11:07:37Z INFO  eyeclipse::live] [tick 14] OCR: iary:一一つあるんだ | primary: iary:一一つあるんだ
+[2026-04-08T11:07:38Z INFO  eyeclipse::live] [tick 15] OCR: iary:一一つあるんだ | primary: iary:一一つあるんだ
+[2026-04-08T11:07:38Z INFO  eyeclipse::live] [tick 15] Text settled after 524ms (appending), translating: iary:一一つあるんだ
+[2026-04-08T11:07:39Z INFO  eyeclipse::live] Translation (898ms): iary: Có một cái này
+[2026-04-08T11:07:43Z INFO  eyeclipse::live] [tick 26] OCR: ラーメンぐ
+    人條。電 | primary: ラーメンぐ
+[2026-04-08T11:07:44Z INFO  eyeclipse::live] [tick 27] OCR: ・トコ
+    ーWでさこ
+    と』ゃ
+    PF3Wi中、員て | primary: PF3Wi中、員て
+[2026-04-08T11:07:45Z INFO  eyeclipse::live] [tick 29] OCR: 仙どパンプ
+    ラーメン美味しいよね | primary: ラーメン美味しいよね
+[2026-04-08T11:07:45Z INFO  eyeclipse::live] [tick 30] OCR: 全にパプ
+    ラーメン美味しいよね | primary: ラーメン美味しいよね
+[2026-04-08T11:07:45Z INFO  eyeclipse::live] [tick 30] Text settled after 504ms (instant), translating: 仙どパンプ
+    ラーメン美味しいよね
+[2026-04-08T11:07:46Z INFO  eyeclipse::live] Translation (353ms): Sen-do Pump
+    Mì ramen ngon thật nhỉ
+[2026-04-08T11:07:46Z INFO  eyeclipse::live] [tick 31] OCR: ラーメン美味しいよね | primary: ラーメン美味しいよね
+[2026-04-08T11:07:46Z INFO  eyeclipse::live] [tick 32] OCR: んバと
+    ラーメン美味しいよね | primary: ラーメン美味しいよね
+[2026-04-08T11:07:47Z INFO  eyeclipse::live] [tick 34] OCR: ピーシー月デ
+    味が濃いラーメンが好き
+    還還ーー) | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:48Z INFO  eyeclipse::live] [tick 35] OCR: ど学ー
+    味が濃いラーメンが好き
+    生還りー | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:48Z INFO  eyeclipse::live] [tick 36] OCR: を衝ー
+    味が濃いラーメンが好き | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:48Z INFO  eyeclipse::live] [tick 36] Text settled after 989ms (appending), translating: ピーシー月デ
+    味が濃いラーメンが好き
+    還還ーー)
+[2026-04-08T11:07:49Z INFO  eyeclipse::live] Translation (395ms): PC tháng này
+    Thích mì ramen có vị đậm đà
+    Hẹn gặp lại nhé!)
+[2026-04-08T11:07:49Z INFO  eyeclipse::live] [tick 37] OCR: ASュラーメンが
+    味が濃いラーメンが好き
+    0還還|符ー】 | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:49Z INFO  eyeclipse::live] [tick 38] OCR: 味が濃いラーメンが好き
+    間野。0還生生二こつ | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:50Z INFO  eyeclipse::live] [tick 39] OCR: 味が濃いラーメンが好き
+    人符|栖をー】 | primary: 味が濃いラーメンが好き
+[2026-04-08T11:07:51Z INFO  eyeclipse::live] [tick 41] OCR: 、Hーーて
+    し湖いラーメン | primary: し湖いラーメン
+[2026-04-08T11:07:51Z INFO  eyeclipse::live] [tick 42] OCR: 人グルと
+    斬濃いラーメン | primary: 斬濃いラーメン
+[2026-04-08T11:07:52Z INFO  eyeclipse::live] [tick 43] OCR: 用濃いラーメン
+    ーー還||つこ生還 | primary: ーー還||つこ生還
+[2026-04-08T11:07:52Z INFO  eyeclipse::live] [tick 44] OCR: し人2ジンプ
+    や)、、>守還 | primary: や)、、>守還
+[2026-04-08T11:07:53Z INFO  eyeclipse::live] [tick 45] OCR: しんレンン | primary: しんレンン
+[2026-04-08T11:07:53Z INFO  eyeclipse::live] [tick 46] OCR: -アーマ
+    同一日は遍提け | primary: 同一日は遍提け
+[2026-04-08T11:07:54Z INFO  eyeclipse::live] [tick 47] OCR: ニつ目は唐揚げ
+    ーー伯。村ご | primary: ニつ目は唐揚げ
+[2026-04-08T11:07:54Z INFO  eyeclipse::live] [tick 48] OCR: ニつ目は唐揚げ | primary: ニつ目は唐揚げ
+[2026-04-08T11:07:54Z INFO  eyeclipse::live] [tick 48] Text settled after 500ms (instant), translating: ニつ目は唐揚げ
+    ーー伯。村ご
+[2026-04-08T11:07:55Z INFO  eyeclipse::live] Translation (361ms): Món thứ hai là gà rán
+    ーーÔng. Làng
+[2026-04-08T11:07:55Z INFO  eyeclipse::live] [tick 49] OCR: //突デご
+    二つ目は唐揚げ | primary: 二つ目は唐揚げ
+[2026-04-08T11:07:55Z INFO  eyeclipse::live] [tick 50] OCR: ニつ目は唐揚げ | primary: ニつ目は唐揚げ
+[2026-04-08T11:07:56Z INFO  eyeclipse::live] [tick 51] OCR: レヒ3ミ
+    -克。守守 | primary: -克。守守
+[2026-04-08T11:07:56Z INFO  eyeclipse::live] [tick 52] OCR: し間還ま3 | primary: し間還ま3
+[2026-04-08T11:07:57Z INFO  eyeclipse::live] [tick 53] OCR: レまPPチコ | primary: レまPPチコ
+[2026-04-08T11:07:57Z INFO  eyeclipse::live] [tick 54] OCR: =唐揚げミ | primary: =唐揚げミ
+[2026-04-08T11:07:58Z INFO  eyeclipse::live] [tick 55] OCR: 倫Aレンン | primary: 倫Aレンン
+[2026-04-08T11:08:00Z INFO  eyeclipse::live] [tick 59] OCR: ーーンプ
+    とりそうだね
+    ーーン旨いな2還半 | primary: ーーン旨いな2還半
+[2026-04-08T11:08:00Z INFO  eyeclipse::live] [tick 60] OCR: 前/ンプ
+    上りそうだね
+    グン間近 | primary: 上りそうだね
+[2026-04-08T11:08:01Z INFO  eyeclipse::live] [tick 61] OCR: 参、さ
+    レデー・i語村ニュ | primary: レデー・i語村ニュ
+[2026-04-08T11:08:01Z INFO  eyeclipse::live] [tick 62] OCR: _家ンプ
+    しコで
+    たにっ3
+    で)、ビニ | primary: で)、ビニ
+[2026-04-08T11:08:02Z INFO  eyeclipse::live] [tick 63] OCR: アグンプ
+    そうだね守
+    イン全還還Mk | primary: イン全還還Mk
+[2026-04-08T11:08:02Z INFO  eyeclipse::live] [tick 64] OCR: アン本還、 | primary: アン本還、
+[2026-04-08T11:08:03Z INFO  eyeclipse::live] [tick 66] OCR: なべ物は条 | primary: なべ物は条
+[2026-04-08T11:08:04Z INFO  eyeclipse::live] [tick 67] OCR: ノ/好きな食べ物は何?
+    アーをーー | primary: ノ/好きな食べ物は何?
+[2026-04-08T11:08:04Z INFO  eyeclipse::live] [tick 68] OCR: ノ好きな食べ物は何?
+    ンーと本の=ご | primary: ノ好きな食べ物は何?
+[2026-04-08T11:08:05Z INFO  eyeclipse::live] [tick 69] OCR: にレノ2
+    ノ好きな食べ物は何?
+    72かューー | primary: ノ好きな食べ物は何?
+[2026-04-08T11:08:05Z INFO  eyeclipse::live] [tick 69] Text settled after 987ms (appending), translating: ノ/好きな食べ物は何?
+    アーをーー
+[2026-04-08T11:08:05Z INFO  eyeclipse::live] Translation (339ms): Này, bạn thích ăn gì?
+    À...
+[2026-04-08T11:08:05Z INFO  eyeclipse::live] [tick 70] OCR: プルーーンプ | primary: プルーーンプ
+[2026-04-08T11:08:07Z INFO  eyeclipse::live] [tick 73] OCR: レー僕はを | primary: レー僕はを
+[2026-04-08T11:08:08Z INFO  eyeclipse::live] [tick 75] OCR: 委たご焼ききま
+    ||還生Muいとにつっ | primary: ||還生Muいとにつっ
+[2026-04-08T11:08:08Z INFO  eyeclipse::live] [tick 76] OCR: 如たご焼きさ
+    たこ衝ささ | primary: 如たご焼きさ
+[2026-04-08T11:08:09Z INFO  eyeclipse::live] [tick 77] OCR: ・用ンプ
+    や]、一生 | primary: や]、一生
+[2026-04-08T11:08:10Z INFO  eyeclipse::live] [tick 79] OCR: ・用ンプ
+    電たご焼きき | primary: 電たご焼きき
+[2026-04-08T11:08:10Z INFO  eyeclipse::live] [tick 80] OCR: 劣ング
+    才たご焼きき | primary: 才たご焼きき
+[2026-04-08T11:08:12Z INFO  eyeclipse::live] [tick 84] OCR: 内攻ン月ブ
+    タコが好きなんだ
+    7|王還5に3 | primary: タコが好きなんだ
+[2026-04-08T11:08:13Z INFO  eyeclipse::live] [tick 85] OCR: タコが好きなんだ | primary: タコが好きなんだ
+[2026-04-08T11:08:13Z INFO  eyeclipse::live] [tick 85] Text settled after 486ms (instant), translating: 内攻ン月ブ
+    タコが好きなんだ
+    7|王還5に3
+[2026-04-08T11:08:13Z INFO  eyeclipse::live] Translation (406ms): Tạp chí Nội Công
+    Tôi thích bạch tuộc
+    7|Vua về 5, 3
+[2026-04-08T11:08:13Z INFO  eyeclipse::live] [tick 86] OCR: タコが好きなんだ | primary: タコが好きなんだ
+[2026-04-08T11:08:14Z INFO  eyeclipse::live] [tick 87] OCR: トコDIEーー
+    4メスプビ7レー
+    ーずッ | primary: 4メスプビ7レー
+[2026-04-08T11:08:15Z INFO  eyeclipse::live] [tick 88] OCR: よね|primary:ラーメン美味しいよね
+    が好き | primary: よね|primary:ラーメン美味しいよね
+[2026-04-08T11:08:15Z INFO  eyeclipse::live] [tick 89] OCR: Primary:味が濃いラーメンが好き
+    primary:し湖いラーメン
+    primary:新濃いラーメン | primary: Primary:味が濃いラーメンが好き
+[2026-04-08T11:08:16Z INFO  eyeclipse::live] [tick 90] OCR: IaTY・エリそうただ節
+    ュ|Primary:レデー・1語村ニュ
+    mary:で)、ビニ | primary: ュ|Primary:レデー・1語村ニュ
+[2026-04-08T11:08:16Z INFO  eyeclipse::live] [tick 91] OCR: imary:如たご焼きさ
+    mary:や]、一生 | primary: imary:如たご焼きさ
+[2026-04-08T11:08:17Z INFO  eyeclipse::live] [tick 92] OCR: ラーメン|primary:Primary:味が濃いラーメンが好き
+    デー・1語村ニュ | primary: ラーメン|primary:Primary:味が濃いラーメンが好き
+[2026-04-08T11:08:23Z INFO  eyeclipse::live] [tick 106] OCR: 還ま<旧__還還OL | primary: 還ま<旧__還還OL
+[2026-04-08T11:08:24Z INFO  eyeclipse::live] [tick 107] OCR: アプ目ンーデメ
+    レーきいタコが | primary: レーきいタコが
+[2026-04-08T11:08:26Z INFO  eyeclipse::live] [tick 111] OCR: るへってると上 | primary: るへってると上
+[2026-04-08T11:08:28Z INFO  eyeclipse::live] [tick 114] OCR: "有2志ごび、4o | primary: "有2志ごび、4o

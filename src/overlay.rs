@@ -3,6 +3,8 @@ use eframe::egui;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
+use crate::capture;
+
 /// Load a system font that supports Vietnamese and CJK characters.
 fn configure_fonts(ctx: &egui::Context) {
     let mut fonts = egui::FontDefinitions::default();
@@ -38,6 +40,42 @@ fn configure_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
+/// Allow dragging the window by its background (no title bar).
+fn enable_drag(ctx: &egui::Context) {
+    // If the user is pressing on empty space (not a widget), start a native drag.
+    let dominated_by_widget = ctx.input(|i| i.pointer.any_click()) && ctx.is_using_pointer();
+    if !dominated_by_widget && ctx.input(|i| i.pointer.any_pressed()) {
+        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
+    }
+}
+
+/// Compute overlay position: below the selection if room, otherwise above.
+fn compute_overlay_position(
+    region_x: i32,
+    region_y: i32,
+    _region_width: u32,
+    region_height: u32,
+    overlay_height: f32,
+    gap: f32,
+) -> (f32, f32) {
+    let pos_x = (region_x as f32).max(0.0);
+
+    // Get monitor height to decide below vs above
+    let monitor_height = capture::get_monitor_dimensions(region_x, region_y)
+        .map(|(_, h)| h as f32)
+        .unwrap_or(1080.0);
+
+    let below_y = region_y as f32 + region_height as f32 + gap;
+    let pos_y = if below_y + overlay_height <= monitor_height {
+        below_y
+    } else {
+        // Not enough room below — place above
+        (region_y as f32 - overlay_height - gap).max(0.0)
+    };
+
+    (pos_x, pos_y)
+}
+
 pub struct OverlayResult {
     pub translated_text: String,
     pub region_x: i32,
@@ -59,7 +97,6 @@ impl eframe::App for OverlayApp {
             self.should_close = true;
         }
 
-        // Check for click outside (focus lost)
         if ctx.input(|i| i.viewport().close_requested()) {
             self.should_close = true;
         }
@@ -69,10 +106,20 @@ impl eframe::App for OverlayApp {
             return;
         }
 
+        // Allow dragging by clicking on window background
+        enable_drag(ctx);
+
         egui::CentralPanel::default()
             .frame(egui::Frame::none().fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 230)).inner_margin(12.0).rounding(8.0))
             .show(ctx, |ui| {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
+
+                // Drag handle
+                ui.horizontal(|ui| {
+                    ui.label(egui::RichText::new("⠿").color(egui::Color32::GRAY).size(10.0));
+                    ui.label(egui::RichText::new("Eyeclipse").color(egui::Color32::GRAY).size(10.0));
+                });
+                ui.separator();
 
                 // Translated text
                 egui::ScrollArea::vertical()
@@ -107,9 +154,17 @@ impl eframe::App for OverlayApp {
 }
 
 pub fn show_overlay(result: OverlayResult) -> Result<()> {
-    // Position overlay near the selected region (below and to the right)
-    let pos_x = (result.region_x as f32 + result.region_width as f32 + 10.0).min(1600.0);
-    let pos_y = (result.region_y as f32).max(10.0);
+    let overlay_height = 250.0_f32;
+    let gap = 5.0_f32;
+    let overlay_width = (result.region_width as f32).max(200.0);
+    let (pos_x, pos_y) = compute_overlay_position(
+        result.region_x,
+        result.region_y,
+        result.region_width,
+        result.region_height,
+        overlay_height,
+        gap,
+    );
 
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -117,7 +172,7 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
             .with_always_on_top()
             .with_transparent(true)
             .with_position(egui::pos2(pos_x, pos_y))
-            .with_inner_size(egui::vec2(400.0, 250.0))
+            .with_inner_size(egui::vec2(overlay_width, overlay_height))
             .with_min_inner_size(egui::vec2(200.0, 100.0)),
         ..Default::default()
     };
@@ -155,6 +210,9 @@ impl eframe::App for LiveOverlayApp {
             return;
         }
 
+        // Allow dragging by clicking on window background
+        enable_drag(ctx);
+
         let translated = self.translated_text.lock().unwrap().clone();
 
         egui::CentralPanel::default()
@@ -168,6 +226,7 @@ impl eframe::App for LiveOverlayApp {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
 
                 ui.horizontal(|ui| {
+                    ui.label(egui::RichText::new("⠿").color(egui::Color32::GRAY).size(10.0));
                     ui.label(
                         egui::RichText::new("⏺ Live Translation")
                             .color(egui::Color32::LIGHT_GREEN)
@@ -217,9 +276,19 @@ pub fn run_live_overlay(
     region_x: i32,
     region_y: i32,
     region_width: u32,
+    region_height: u32,
 ) -> Result<()> {
-    let pos_x = (region_x as f32 + region_width as f32 + 10.0).min(1600.0);
-    let pos_y = (region_y as f32).max(10.0);
+    let overlay_height = 300.0_f32;
+    let gap = 5.0_f32;
+    let overlay_width = (region_width as f32).max(200.0);
+    let (pos_x, pos_y) = compute_overlay_position(
+        region_x,
+        region_y,
+        region_width,
+        region_height,
+        overlay_height,
+        gap,
+    );
 
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -227,7 +296,7 @@ pub fn run_live_overlay(
             .with_always_on_top()
             .with_transparent(true)
             .with_position(egui::pos2(pos_x, pos_y))
-            .with_inner_size(egui::vec2(400.0, 300.0))
+            .with_inner_size(egui::vec2(overlay_width, overlay_height))
             .with_min_inner_size(egui::vec2(200.0, 100.0)),
         ..Default::default()
     };

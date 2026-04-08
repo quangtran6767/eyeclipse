@@ -3,7 +3,12 @@ use image::DynamicImage;
 use leptess::{LepTess, Variable};
 use std::io::Cursor;
 
-pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
+pub struct OcrResult {
+    pub text: String,
+    pub confidence: i32,
+}
+
+pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<OcrResult> {
     // Preprocess: convert to grayscale
     let mut gray = img.to_luma8();
 
@@ -36,7 +41,7 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
 
     // Run OCR in a catch_unwind to survive panics from the C library
     let lang_owned = lang.to_string();
-    let ocr_result = std::panic::catch_unwind(move || -> Result<String> {
+    let ocr_result = std::panic::catch_unwind(move || -> Result<OcrResult> {
         let mut lt = LepTess::new(None, &lang_owned)
             .context("Failed to init Tesseract")?;
 
@@ -53,10 +58,11 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
         lt.set_image_from_mem(&png_bytes)
             .context("Failed to set image for OCR")?;
         let raw = lt.get_utf8_text().context("Failed to extract text")?;
+        let confidence = lt.mean_text_conf();
 
         // Post-process: strip noise lines, keep only meaningful text
         let cleaned = clean_ocr_output(&raw, &lang_owned);
-        Ok(cleaned)
+        Ok(OcrResult { text: cleaned, confidence })
     });
 
     match ocr_result {
@@ -68,10 +74,7 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
 
 /// Remove noise lines from OCR output. Keeps only lines that look like real text.
 fn clean_ocr_output(raw: &str, lang: &str) -> String {
-    let langs: Vec<&str> = lang.split('+').collect();
-    let is_cjk = langs.iter().any(|l| {
-        matches!(*l, "jpn" | "chi_sim" | "chi_tra" | "kor" | "jpn_vert" | "chi_sim_vert" | "chi_tra_vert")
-    });
+    let is_cjk = is_cjk_lang(lang);
 
     let lines: Vec<&str> = raw.lines().collect();
     let kept: Vec<&str> = lines
@@ -108,6 +111,11 @@ fn is_meaningful_cjk_line(line: &str) -> bool {
         return false;
     }
 
+    // Reject lines containing pipe '|' — almost always OCR noise, never in subtitles
+    if chars.contains(&'|') {
+        return false;
+    }
+
     // Count meaningful CJK characters: hiragana, katakana, kanji, hangul
     let meaningful = chars.iter().filter(|c| is_cjk_char(**c)).count();
     let total_non_space = chars.iter().filter(|c| !c.is_whitespace()).count();
@@ -116,9 +124,22 @@ fn is_meaningful_cjk_line(line: &str) -> bool {
         return false;
     }
 
-    // At least 40% of non-space chars should be CJK, and at least 3 CJK chars total
+    // Reject lines dominated by katakana long-vowel mark (ー) — common OCR noise
+    let longvowel_count = chars.iter().filter(|c| **c == 'ー').count();
+    if longvowel_count > 0 && longvowel_count as f64 / total_non_space as f64 >= 0.3 {
+        return false;
+    }
+
+    // Reject lines with too many small katakana (ュ, ョ, ャ, ッ) relative to content
+    // These are common OCR noise artifacts
+    let small_katakana_count = chars.iter().filter(|c| matches!(**c, 'ュ' | 'ョ' | 'ャ' | 'ッ' | 'ェ')).count();
+    if small_katakana_count > 0 && small_katakana_count as f64 / total_non_space as f64 >= 0.3 {
+        return false;
+    }
+
+    // At least 40% of non-space chars should be CJK, and at least 4 CJK chars total
     let ratio = meaningful as f64 / total_non_space as f64;
-    meaningful >= 3 && ratio >= 0.4
+    meaningful >= 4 && ratio >= 0.4
 }
 
 fn is_cjk_char(c: char) -> bool {
@@ -158,7 +179,20 @@ fn is_meaningful_latin_line(line: &str) -> bool {
 
     // At least 50% alphabetic characters
     let ratio = alpha as f64 / total_non_space as f64;
-    alpha >= 2 && ratio >= 0.5
+    if alpha < 2 || ratio < 0.5 {
+        return false;
+    }
+
+    // Reject lines with very low average word length (<2 chars per word)
+    let words: Vec<&str> = line.split_whitespace().collect();
+    if !words.is_empty() {
+        let avg_word_len: f64 = words.iter().map(|w| w.len() as f64).sum::<f64>() / words.len() as f64;
+        if avg_word_len < 2.0 {
+            return false;
+        }
+    }
+
+    true
 }
 
 /// Build a character whitelist string based on the OCR language config.
@@ -234,4 +268,126 @@ pub fn check_tesseract_available(lang: &str) -> Result<()> {
         lang.split('+').next().unwrap_or(lang)
     ))?;
     Ok(())
+}
+
+/// Check if OCR output looks like garbage (log lines, IDE UI, file paths, etc.)
+/// rather than actual subtitle/content text.
+/// Returns true if the text should be rejected.
+pub fn is_garbage_text(text: &str) -> bool {
+    if text.is_empty() {
+        return true;
+    }
+
+    let lines: Vec<&str> = text.lines().map(|l| l.trim()).filter(|l| !l.is_empty()).collect();
+    if lines.is_empty() {
+        return true;
+    }
+
+    let garbage_count = lines.iter().filter(|line| is_garbage_line(line)).count();
+    let ratio = garbage_count as f64 / lines.len() as f64;
+
+    // If more than 30% of lines look like garbage, reject the whole thing
+    ratio > 0.3
+}
+
+fn is_garbage_line(line: &str) -> bool {
+    let lower = line.to_lowercase();
+
+    // Log patterns
+    if lower.contains("[20") && (lower.contains("info") || lower.contains("warn") || lower.contains("error")) {
+        return true;
+    }
+
+    // Eyeclipse log feedback loop — overlay/terminal log text being re-captured by OCR.
+    // OCR often misreads "eyeclipse" as "clipse", "::live]" as "::live [", etc.
+    if lower.contains("eyeclipse") || lower.contains("clipse") {
+        return true;
+    }
+    if lower.contains("::live") {
+        return true;
+    }
+    if lower.contains("[tick") {
+        return true;
+    }
+    if lower.contains("text stable") {
+        return true;
+    }
+    if lower.contains("translating:") {
+        return true;
+    }
+    if lower.contains("agreements") {
+        return true;
+    }
+    if lower.contains("ocr:") || lower.contains("ocr (") {
+        return true;
+    }
+    if lower.contains("lck") {
+        return true;
+    }
+    if lower.contains("translation (") && lower.contains("ms)") {
+        return true;
+    }
+
+    // File/path patterns
+    if lower.contains("~/") || lower.contains(".log") || lower.contains("projects/") {
+        return true;
+    }
+
+    // IDE UI patterns
+    if lower.contains("debugconsole") || lower.contains("gitlens") {
+        return true;
+    }
+    let ide_keywords = ["problems", "output", "terminal", "debugconsol"];
+    let ide_matches = ide_keywords.iter().filter(|kw| lower.contains(**kw)).count();
+    if ide_matches >= 2 {
+        return true;
+    }
+
+    // OCR self-reference patterns (log format leaking)
+    if lower.contains("primary:") || lower.contains("| primary") {
+        return true;
+    }
+
+    false
+}
+
+/// Check if the OCR language config is CJK.
+pub fn is_cjk_lang(lang: &str) -> bool {
+    lang.split('+').any(|l| {
+        matches!(l, "jpn" | "chi_sim" | "chi_tra" | "kor" | "jpn_vert" | "chi_sim_vert" | "chi_tra_vert")
+    })
+}
+
+/// Strip leading OCR noise characters from a line.
+/// Tesseract often prepends random punctuation, numbers, or single chars
+/// to otherwise clean subtitle text (e.g., "、どんな子供..." or "4大人に...").
+pub fn strip_leading_noise(line: &str) -> &str {
+    let chars: Vec<(usize, char)> = line.char_indices().collect();
+    if chars.is_empty() {
+        return line;
+    }
+
+    // Find where the "real" content starts by skipping leading noise chars:
+    // punctuation, digits, ASCII symbols, single-char CJK noise, long-vowel marks
+    let mut start_idx = 0;
+    for &(byte_idx, c) in &chars {
+        if c.is_ascii_punctuation()
+            || c.is_ascii_digit()
+            || c.is_ascii_whitespace()
+            || c == 'ー'
+            || matches!(c, '、' | '。' | '」' | '「' | '』' | '『' | '）' | '（'
+                | '，' | '．' | '・' | '〜' | '～' | '"' | '"'
+                | '【' | '】' | '〔' | '〕')
+        {
+            start_idx = byte_idx + c.len_utf8();
+        } else {
+            break;
+        }
+    }
+
+    if start_idx >= line.len() {
+        return line; // All noise? Return original to avoid empty string
+    }
+
+    &line[start_idx..]
 }

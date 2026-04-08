@@ -227,7 +227,10 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
     // 3. OCR
     #[cfg(feature = "ocr")]
     let text = match ocr::extract_text(&img, &config.ocr_lang) {
-        Ok(t) => t,
+        Ok(r) => {
+            log::info!("OCR confidence: {}", r.confidence);
+            r.text
+        }
         Err(e) => {
             log::error!("OCR failed: {}", e);
             return;
@@ -291,7 +294,6 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
     let source_lang = config.source_lang.clone();
     let target_lang = config.target_lang.clone();
     let interval_ms = config.live_interval_ms;
-    let settle_time_ms = config.settle_time_ms;
     let backend = translate::create_backend(config);
 
     // Spawn monitor in background thread with its own tokio runtime
@@ -305,7 +307,6 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
                 &target_lang,
                 backend.as_ref(),
                 interval_ms,
-                settle_time_ms,
                 &monitor_stop,
                 &monitor_text,
             )
@@ -324,6 +325,7 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
         region.x,
         region.y,
         region.width,
+        region.height,
     ) {
         log::error!("Live overlay error: {}", e);
     }

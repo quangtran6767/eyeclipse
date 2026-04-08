@@ -52,3 +52,20 @@ pub fn capture_full_screen() -> Result<DynamicImage> {
     let full = monitor.capture_image().context("Failed to capture screen")?;
     Ok(DynamicImage::ImageRgba8(full))
 }
+
+/// Get the dimensions (width, height) of the monitor that contains the given point.
+pub fn get_monitor_dimensions(x: i32, y: i32) -> Result<(u32, u32)> {
+    let monitors = Monitor::all().context("Failed to enumerate monitors")?;
+    let monitor = monitors
+        .iter()
+        .find(|m| {
+            let mx = m.x();
+            let my = m.y();
+            let mw = m.width() as i32;
+            let mh = m.height() as i32;
+            x >= mx && y >= my && x < mx + mw && y < my + mh
+        })
+        .or_else(|| monitors.first())
+        .context("No monitor found")?;
+    Ok((monitor.width(), monitor.height()))
+}
