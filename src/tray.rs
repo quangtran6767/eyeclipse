@@ -18,7 +18,7 @@ pub fn start_tray(tx: mpsc::Sender<TrayEvent>) -> Result<()> {
 
         let capture_item = MenuItem::new("Capture Region (Super+Shift+S)", true, None);
         let toggle_item = MenuItem::new("Toggle Live Mode", true, None);
-        let config_item = MenuItem::new("Open Config", true, None);
+        let config_item = MenuItem::new("Settings", true, None);
         let quit_item = MenuItem::new("Quit", true, None);
 
         menu.append(&capture_item).unwrap();

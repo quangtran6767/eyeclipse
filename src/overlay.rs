@@ -3,7 +3,6 @@ use eframe::egui;
 use std::sync::{Arc, Mutex};
 
 pub struct OverlayResult {
-    pub source_text: String,
     pub translated_text: String,
     pub region_x: i32,
     pub region_y: i32,
@@ -39,31 +38,14 @@ impl eframe::App for OverlayApp {
             .show(ctx, |ui| {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
 
-                ui.heading("Eyeclipse");
-                ui.separator();
-
-                // Source text
-                ui.label(egui::RichText::new("Source:").color(egui::Color32::LIGHT_GRAY).size(11.0));
-                egui::ScrollArea::vertical()
-                    .max_height(100.0)
-                    .id_salt("source_scroll")
-                    .show(ui, |ui| {
-                        ui.label(&self.result.source_text);
-                    });
-
-                ui.add_space(8.0);
-                ui.separator();
-                ui.add_space(4.0);
-
                 // Translated text
-                ui.label(egui::RichText::new("Translation:").color(egui::Color32::LIGHT_GREEN).size(11.0));
                 egui::ScrollArea::vertical()
-                    .max_height(200.0)
+                    .max_height(280.0)
                     .id_salt("translation_scroll")
                     .show(ui, |ui| {
                         ui.label(
                             egui::RichText::new(&self.result.translated_text)
-                                .size(14.0)
+                                .size(15.0)
                                 .color(egui::Color32::WHITE),
                         );
                     });
@@ -90,12 +72,8 @@ impl eframe::App for OverlayApp {
 
 pub fn show_overlay(result: OverlayResult) -> Result<()> {
     // Position overlay near the selected region (below and to the right)
-    let pos_x = result.region_x as f32 + result.region_width as f32 + 10.0;
-    let pos_y = result.region_y as f32;
-
-    // Ensure it stays on screen — clamp to reasonable values
-    let pos_x = pos_x.min(1600.0);
-    let pos_y = pos_y.max(10.0);
+    let pos_x = (result.region_x as f32 + result.region_width as f32 + 10.0).min(1600.0);
+    let pos_y = (result.region_y as f32).max(10.0);
 
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -103,8 +81,8 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
             .with_always_on_top()
             .with_transparent(true)
             .with_position(egui::pos2(pos_x, pos_y))
-            .with_inner_size(egui::vec2(400.0, 350.0))
-            .with_min_inner_size(egui::vec2(250.0, 150.0)),
+            .with_inner_size(egui::vec2(400.0, 250.0))
+            .with_min_inner_size(egui::vec2(200.0, 100.0)),
         ..Default::default()
     };
 
@@ -123,7 +101,6 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
 
 /// Shared state for updating the overlay from the live mode thread.
 pub struct LiveOverlayState {
-    pub source_text: Arc<Mutex<String>>,
     pub translated_text: Arc<Mutex<String>>,
     pub should_close: Arc<Mutex<bool>>,
 }
@@ -143,7 +120,6 @@ impl eframe::App for LiveOverlayApp {
             return;
         }
 
-        let source = self.state.source_text.lock().unwrap().clone();
         let translated = self.state.translated_text.lock().unwrap().clone();
 
         egui::CentralPanel::default()
@@ -151,31 +127,22 @@ impl eframe::App for LiveOverlayApp {
             .show(ctx, |ui| {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
 
-                ui.heading("Eyeclipse (Live)");
+                ui.label(egui::RichText::new("Live Translation").color(egui::Color32::LIGHT_GREEN).size(11.0));
                 ui.separator();
 
-                ui.label(egui::RichText::new("Source:").color(egui::Color32::LIGHT_GRAY).size(11.0));
                 egui::ScrollArea::vertical()
-                    .max_height(100.0)
-                    .id_salt("source_scroll")
-                    .show(ui, |ui| {
-                        ui.label(&source);
-                    });
-
-                ui.add_space(8.0);
-                ui.separator();
-                ui.add_space(4.0);
-
-                ui.label(egui::RichText::new("Translation:").color(egui::Color32::LIGHT_GREEN).size(11.0));
-                egui::ScrollArea::vertical()
-                    .max_height(200.0)
+                    .max_height(250.0)
                     .id_salt("translation_scroll")
                     .show(ui, |ui| {
-                        ui.label(
-                            egui::RichText::new(&translated)
-                                .size(14.0)
-                                .color(egui::Color32::WHITE),
-                        );
+                        if translated.is_empty() {
+                            ui.label(egui::RichText::new("Monitoring...").italics().color(egui::Color32::GRAY));
+                        } else {
+                            ui.label(
+                                egui::RichText::new(&translated)
+                                    .size(15.0)
+                                    .color(egui::Color32::WHITE),
+                            );
+                        }
                     });
 
                 ui.add_space(8.0);
@@ -199,13 +166,11 @@ pub fn show_live_overlay(
     region_width: u32,
 ) -> Result<LiveOverlayState> {
     let state = LiveOverlayState {
-        source_text: Arc::new(Mutex::new("Monitoring...".to_string())),
         translated_text: Arc::new(Mutex::new(String::new())),
         should_close: Arc::new(Mutex::new(false)),
     };
 
     let app_state = LiveOverlayState {
-        source_text: Arc::clone(&state.source_text),
         translated_text: Arc::clone(&state.translated_text),
         should_close: Arc::clone(&state.should_close),
     };

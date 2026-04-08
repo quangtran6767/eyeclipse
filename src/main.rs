@@ -1,6 +1,6 @@
 use anyhow::Result;
 use eyeclipse::config::{AppConfig, TranslationMode};
-use eyeclipse::{capture, hotkey, live, overlay, selector, translate};
+use eyeclipse::{capture, hotkey, live, overlay, selector, settings, translate};
 #[cfg(feature = "ocr")]
 use eyeclipse::ocr;
 #[cfg(feature = "tray")]
@@ -80,18 +80,17 @@ fn main() -> Result<()> {
                 let _ = config.save();
             }
             Ok(AppEvent::OpenConfig) => {
-                log::info!("Opening config file");
-                if let Ok(path) = AppConfig::config_path() {
-                    // Ensure config file exists
-                    if !path.exists() {
-                        let _ = config.save();
+                log::info!("Opening settings GUI");
+                if let Err(e) = settings::show_settings(&config) {
+                    log::error!("Settings window error: {}", e);
+                }
+                // Reload config after settings window closes
+                match AppConfig::load() {
+                    Ok(new_config) => {
+                        config = new_config;
+                        log::info!("Config reloaded after settings change");
                     }
-                    if let Err(e) = std::process::Command::new("xdg-open")
-                        .arg(&path)
-                        .spawn()
-                    {
-                        log::error!("Failed to open config: {}", e);
-                    }
+                    Err(e) => log::error!("Failed to reload config: {}", e),
                 }
             }
             Ok(AppEvent::Quit) => {
@@ -224,7 +223,6 @@ fn handle_oneshot(config: &AppConfig, rt: &tokio::runtime::Runtime, region: sele
 
     // 5. Show overlay
     let result = overlay::OverlayResult {
-        source_text: text,
         translated_text: translated,
         region_x: region.x,
         region_y: region.y,
@@ -245,6 +243,9 @@ fn handle_live(config: &AppConfig, rt: &tokio::runtime::Runtime, region: selecto
             return;
         }
     };
+
+    // Give the overlay window time to initialize before starting the monitor
+    std::thread::sleep(std::time::Duration::from_millis(500));
 
     let backend = translate::create_backend(config);
 

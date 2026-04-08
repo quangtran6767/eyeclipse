@@ -7,6 +7,7 @@ pub mod live;
 pub mod ocr;
 pub mod overlay;
 pub mod selector;
+pub mod settings;
 pub mod translate;
 #[cfg(feature = "tray")]
 pub mod tray;

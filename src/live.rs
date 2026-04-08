@@ -71,9 +71,6 @@ pub async fn start_live_monitor(
             }
         };
 
-        // Update source text in overlay
-        *overlay_state.source_text.lock().unwrap() = text.clone();
-
         // Translate
         match backend.translate_dyn(text.clone(), source_lang.to_owned(), target_lang.to_owned()).await {
             Ok(translated) => {
