@@ -1,18 +1,10 @@
-mod capture;
-mod config;
-mod diff;
-mod hotkey;
-mod live;
-#[cfg(feature = "ocr")]
-mod ocr;
-mod overlay;
-mod selector;
-mod translate;
-#[cfg(feature = "tray")]
-mod tray;
-
 use anyhow::Result;
-use config::{AppConfig, TranslationMode};
+use eyeclipse::config::{AppConfig, TranslationMode};
+use eyeclipse::{capture, hotkey, live, overlay, selector, translate};
+#[cfg(feature = "ocr")]
+use eyeclipse::ocr;
+#[cfg(feature = "tray")]
+use eyeclipse::tray;
 use std::sync::mpsc;
 
 fn main() -> Result<()> {
