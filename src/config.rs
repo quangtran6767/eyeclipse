@@ -58,6 +58,9 @@ pub struct AppConfig {
 
     #[serde(default = "default_ocr_lang")]
     pub ocr_lang: String,
+
+    #[serde(default = "default_settle_time_ms")]
+    pub settle_time_ms: u64,
 }
 
 fn default_hotkey() -> String {
@@ -80,6 +83,10 @@ fn default_ocr_lang() -> String {
     "jpn+eng".to_string()
 }
 
+fn default_settle_time_ms() -> u64 {
+    1500
+}
+
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
@@ -92,6 +99,7 @@ impl Default for AppConfig {
             mode: TranslationMode::default(),
             live_interval_ms: default_live_interval_ms(),
             ocr_lang: default_ocr_lang(),
+            settle_time_ms: default_settle_time_ms(),
         }
     }
 }

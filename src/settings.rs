@@ -192,6 +192,19 @@ impl eframe::App for SettingsApp {
                     ui.label("Live interval (ms):");
                     ui.add(egui::DragValue::new(&mut self.config.live_interval_ms).range(200..=10000).speed(50));
                     ui.end_row();
+
+                    // --- Settle time ---
+                    ui.label("Settle time (ms):");
+                    ui.add(
+                        egui::DragValue::new(&mut self.config.settle_time_ms)
+                            .range(500..=10000)
+                            .speed(100),
+                    );
+                    ui.end_row();
+
+                    ui.label("");
+                    ui.label(egui::RichText::new("How long text must stay unchanged before translating").weak().size(10.0));
+                    ui.end_row();
                 });
 
             ui.add_space(12.0);

@@ -29,6 +29,7 @@ mod tests {
             mode: TranslationMode::Live,
             live_interval_ms: 500,
             ocr_lang: "eng".to_string(),
+            settle_time_ms: 2000,
         };
 
         let toml_str = toml::to_string_pretty(&config).unwrap();

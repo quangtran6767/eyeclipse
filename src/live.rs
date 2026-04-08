@@ -12,10 +12,6 @@ use crate::ocr;
 use crate::selector::Region;
 use crate::translate::TranslationBackendDyn;
 
-/// How long (ms) the OCR text must remain unchanged before we consider it "complete".
-/// This handles text that animates in character-by-character (subtitles, typewriter effects).
-const SETTLE_TIME_MS: u128 = 1500;
-
 /// Truncate a string to at most `max` characters, respecting char boundaries.
 fn truncate_chars(s: &str, max: usize) -> &str {
     match s.char_indices().nth(max) {
@@ -31,9 +27,11 @@ pub async fn start_live_monitor(
     target_lang: &str,
     backend: &dyn TranslationBackendDyn,
     interval_ms: u64,
+    settle_time_ms: u64,
     stop_signal: &AtomicBool,
     translated_text: &Arc<Mutex<String>>,
 ) -> Result<()> {
+    let settle_time = settle_time_ms as u128;
     let mut prev_image: Option<DynamicImage> = None;
     let diff_threshold: u8 = 10;
     let change_ratio: f64 = 0.01;
@@ -81,7 +79,7 @@ pub async fn start_live_monitor(
             if !text_settled {
                 if let Some(ref text) = current_ocr_text {
                     let elapsed = text_last_changed.elapsed().as_millis();
-                    if elapsed >= SETTLE_TIME_MS {
+                    if elapsed >= settle_time {
                         // Text has been stable long enough — translate it
                         if last_translated_text.as_deref() != Some(text) {
                             log::info!("[tick {}] Text settled after {}ms, translating: {}",
@@ -133,7 +131,7 @@ pub async fn start_live_monitor(
         } else {
             // Same text as before — check if it's been stable long enough
             let elapsed = text_last_changed.elapsed().as_millis();
-            if !text_settled && elapsed >= SETTLE_TIME_MS {
+            if !text_settled && elapsed >= settle_time {
                 let text = current_ocr_text.as_ref().unwrap();
                 if last_translated_text.as_deref() != Some(text) {
                     log::info!("[tick {}] Text settled after {}ms, translating: {}",
