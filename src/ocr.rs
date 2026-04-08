@@ -41,12 +41,10 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
             .context("Failed to init Tesseract")?;
 
         // PSM 6 = "Assume a single uniform block of text"
-        // Much better for subtitles than the default (auto-detect layout)
         lt.set_variable(Variable::TesseditPagesegMode, "6")
             .context("Failed to set PSM")?;
 
         // Restrict recognized characters to match the configured language.
-        // This prevents Tesseract from hallucinating random scripts on noisy backgrounds.
         if let Some(whitelist) = build_char_whitelist(&lang_owned) {
             lt.set_variable(Variable::TesseditCharWhitelist, &whitelist)
                 .context("Failed to set char whitelist")?;
@@ -54,8 +52,11 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
 
         lt.set_image_from_mem(&png_bytes)
             .context("Failed to set image for OCR")?;
-        let text = lt.get_utf8_text().context("Failed to extract text")?;
-        Ok(text.trim().to_string())
+        let raw = lt.get_utf8_text().context("Failed to extract text")?;
+
+        // Post-process: strip noise lines, keep only meaningful text
+        let cleaned = clean_ocr_output(&raw, &lang_owned);
+        Ok(cleaned)
     });
 
     match ocr_result {
@@ -63,6 +64,101 @@ pub fn extract_text(img: &DynamicImage, lang: &str) -> Result<String> {
         Ok(Err(e)) => Err(e),
         Err(_) => anyhow::bail!("Tesseract crashed (panic) during OCR — try a different region"),
     }
+}
+
+/// Remove noise lines from OCR output. Keeps only lines that look like real text.
+fn clean_ocr_output(raw: &str, lang: &str) -> String {
+    let langs: Vec<&str> = lang.split('+').collect();
+    let is_cjk = langs.iter().any(|l| {
+        matches!(*l, "jpn" | "chi_sim" | "chi_tra" | "kor" | "jpn_vert" | "chi_sim_vert" | "chi_tra_vert")
+    });
+
+    let lines: Vec<&str> = raw.lines().collect();
+    let kept: Vec<&str> = lines
+        .into_iter()
+        .map(|l| l.trim())
+        .filter(|line| !line.is_empty())
+        .filter(|line| {
+            if is_cjk {
+                is_meaningful_cjk_line(line)
+            } else {
+                is_meaningful_latin_line(line)
+            }
+        })
+        .collect();
+
+    if is_cjk {
+        // Japanese/Chinese: remove all ASCII spaces (they're OCR noise in CJK text)
+        kept.join("\n")
+            .chars()
+            .filter(|c| *c != ' ')
+            .collect::<String>()
+            .trim()
+            .to_string()
+    } else {
+        kept.join("\n").trim().to_string()
+    }
+}
+
+/// Check if a line contains meaningful CJK text (Japanese/Chinese/Korean).
+/// Rejects lines that are mostly symbols, numbers, single chars, or Latin noise.
+fn is_meaningful_cjk_line(line: &str) -> bool {
+    let chars: Vec<char> = line.chars().collect();
+    if chars.len() < 2 {
+        return false;
+    }
+
+    // Count meaningful CJK characters: hiragana, katakana, kanji, hangul
+    let meaningful = chars.iter().filter(|c| is_cjk_char(**c)).count();
+    let total_non_space = chars.iter().filter(|c| !c.is_whitespace()).count();
+
+    if total_non_space == 0 {
+        return false;
+    }
+
+    // At least 40% of non-space chars should be CJK, and at least 3 CJK chars total
+    let ratio = meaningful as f64 / total_non_space as f64;
+    meaningful >= 3 && ratio >= 0.4
+}
+
+fn is_cjk_char(c: char) -> bool {
+    matches!(c,
+        // Hiragana
+        '\u{3040}'..='\u{309F}' |
+        // Katakana
+        '\u{30A0}'..='\u{30FF}' |
+        // CJK Unified Ideographs (kanji)
+        '\u{4E00}'..='\u{9FFF}' |
+        // CJK Extension A
+        '\u{3400}'..='\u{4DBF}' |
+        // Hangul
+        '\u{AC00}'..='\u{D7AF}' |
+        // Fullwidth digits/letters (Japanese uses these)
+        '\u{FF01}'..='\u{FF60}' |
+        // CJK punctuation
+        '\u{3000}'..='\u{303F}' |
+        // Halfwidth katakana
+        '\u{FF65}'..='\u{FF9F}'
+    )
+}
+
+/// Check if a line looks like meaningful Latin-script text.
+fn is_meaningful_latin_line(line: &str) -> bool {
+    let chars: Vec<char> = line.chars().collect();
+    if chars.len() < 3 {
+        return false;
+    }
+
+    let alpha = chars.iter().filter(|c| c.is_alphabetic()).count();
+    let total_non_space = chars.iter().filter(|c| !c.is_whitespace()).count();
+
+    if total_non_space == 0 {
+        return false;
+    }
+
+    // At least 50% alphabetic characters
+    let ratio = alpha as f64 / total_non_space as f64;
+    alpha >= 2 && ratio >= 0.5
 }
 
 /// Build a character whitelist string based on the OCR language config.

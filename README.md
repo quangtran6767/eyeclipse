@@ -34,7 +34,7 @@ sudo apt-get install -y \
   clang \
   libtesseract-dev \
   libleptonica-dev \
-  tesseract-ocr \
+  tesseract-ocr \ 
   tesseract-ocr-eng \
   tesseract-ocr-jpn \
   libglib2.0-dev \
