@@ -18,6 +18,21 @@ impl Default for TranslationMode {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
+pub enum LiveTimingMode {
+    /// Translate immediately on first good OCR reading (pre-rendered subtitles).
+    Instant,
+    /// Wait for text to stabilize before translating (live speech/typing).
+    Settle,
+}
+
+impl Default for LiveTimingMode {
+    fn default() -> Self {
+        Self::Settle
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum ApiBackend {
     Deepl,
     LibreTranslate,
@@ -61,6 +76,9 @@ pub struct AppConfig {
 
     #[serde(default = "default_settle_time_ms")]
     pub settle_time_ms: u64,
+
+    #[serde(default)]
+    pub live_timing: LiveTimingMode,
 }
 
 fn default_hotkey() -> String {
@@ -100,6 +118,7 @@ impl Default for AppConfig {
             live_interval_ms: default_live_interval_ms(),
             ocr_lang: default_ocr_lang(),
             settle_time_ms: default_settle_time_ms(),
+            live_timing: LiveTimingMode::default(),
         }
     }
 }

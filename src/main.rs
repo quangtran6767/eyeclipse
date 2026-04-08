@@ -294,6 +294,7 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
     let source_lang = config.source_lang.clone();
     let target_lang = config.target_lang.clone();
     let interval_ms = config.live_interval_ms;
+    let timing_mode = config.live_timing.clone();
     let backend = translate::create_backend(config);
 
     // Spawn monitor in background thread with its own tokio runtime
@@ -307,6 +308,7 @@ fn handle_live(config: &AppConfig, region: selector::Region) {
                 &target_lang,
                 backend.as_ref(),
                 interval_ms,
+                &timing_mode,
                 &monitor_stop,
                 &monitor_text,
             )

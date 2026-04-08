@@ -2,7 +2,7 @@ use anyhow::Result;
 use eframe::egui;
 use std::process::Command;
 
-use crate::config::{ApiBackend, AppConfig, TranslationMode};
+use crate::config::{ApiBackend, AppConfig, LiveTimingMode, TranslationMode};
 
 /// Detect installed Tesseract language packs by running `tesseract --list-langs`.
 pub fn detect_tesseract_langs() -> Vec<String> {
@@ -191,6 +191,24 @@ impl eframe::App for SettingsApp {
                     // --- Live interval ---
                     ui.label("Live interval (ms):");
                     ui.add(egui::DragValue::new(&mut self.config.live_interval_ms).range(200..=10000).speed(50));
+                    ui.end_row();
+
+                    // --- Live timing mode ---
+                    ui.label("Live timing:");
+                    let timing_label = match self.config.live_timing {
+                        LiveTimingMode::Instant => "Instant (subtitles)",
+                        LiveTimingMode::Settle => "Settle (speech/typing)",
+                    };
+                    egui::ComboBox::from_id_salt("live_timing")
+                        .selected_text(timing_label)
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(&mut self.config.live_timing, LiveTimingMode::Instant, "Instant (subtitles)");
+                            ui.selectable_value(&mut self.config.live_timing, LiveTimingMode::Settle, "Settle (speech/typing)");
+                        });
+                    ui.end_row();
+
+                    ui.label("");
+                    ui.label(egui::RichText::new("Instant: translate as soon as text appears (pre-rendered subtitles)\nSettle: wait for text to stabilize (live speech)").weak().size(10.0));
                     ui.end_row();
 
                     // --- Settle time ---

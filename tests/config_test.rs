@@ -13,6 +13,7 @@ mod tests {
         assert_eq!(config.mode, TranslationMode::Oneshot);
         assert_eq!(config.live_interval_ms, 1000);
         assert_eq!(config.ocr_lang, "jpn+eng");
+        assert_eq!(config.live_timing, LiveTimingMode::Settle);
         assert!(config.api_key.is_empty());
         assert!(config.api_url.is_empty());
     }
@@ -30,6 +31,7 @@ mod tests {
             live_interval_ms: 500,
             ocr_lang: "eng".to_string(),
             settle_time_ms: 2000,
+            live_timing: LiveTimingMode::Instant,
         };
 
         let toml_str = toml::to_string_pretty(&config).unwrap();
@@ -114,6 +116,18 @@ target_lang = "de"
             let toml_str = format!("mode = {}", input);
             let config: AppConfig = toml::from_str(&toml_str).unwrap();
             assert_eq!(config.mode, expected);
+        }
+    }
+
+    #[test]
+    fn test_all_timing_modes_deserialize() {
+        for (input, expected) in [
+            ("\"instant\"", LiveTimingMode::Instant),
+            ("\"settle\"", LiveTimingMode::Settle),
+        ] {
+            let toml_str = format!("live_timing = {}", input);
+            let config: AppConfig = toml::from_str(&toml_str).unwrap();
+            assert_eq!(config.live_timing, expected);
         }
     }
 }

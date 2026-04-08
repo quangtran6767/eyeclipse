@@ -9,14 +9,23 @@ use crate::capture;
 fn configure_fonts(ctx: &egui::Context) {
     let mut fonts = egui::FontDefinitions::default();
 
-    // Try loading Noto Sans from common system paths
-    let font_paths = [
+    // Try loading fonts from common system paths
+    #[cfg(target_os = "linux")]
+    let font_paths: &[&str] = &[
         "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/noto/NotoSans-Regular.ttf",
     ];
 
-    for path in &font_paths {
+    #[cfg(target_os = "macos")]
+    let font_paths: &[&str] = &[
+        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/Library/Fonts/Arial Unicode.ttf",
+        "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    ];
+
+    for path in font_paths {
         if let Ok(font_data) = std::fs::read(path) {
             fonts.font_data.insert(
                 "system_font".to_owned(),

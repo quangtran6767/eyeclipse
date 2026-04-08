@@ -7,6 +7,7 @@ use std::time::Instant;
 use tokio::time::{self, Duration};
 
 use crate::capture;
+use crate::config::LiveTimingMode;
 use crate::diff;
 #[cfg(feature = "ocr")]
 use crate::ocr;
@@ -141,6 +142,7 @@ pub async fn start_live_monitor(
     target_lang: &str,
     backend: &dyn TranslationBackendDyn,
     interval_ms: u64,
+    timing_mode: &LiveTimingMode,
     stop_signal: &AtomicBool,
     translated_text: &Arc<Mutex<String>>,
 ) -> Result<()> {
@@ -279,6 +281,23 @@ pub async fn start_live_monitor(
                 ocr_result.confidence, truncate_chars(text, 120));
 
             let normalized = normalize(cleaned);
+
+            // --- Instant mode: translate on first good reading that differs ---
+            if *timing_mode == LiveTimingMode::Instant {
+                let dominated = last_translated_normalized.as_ref()
+                    .map(|last| similarity(last, &normalized, profile.similarity_threshold) >= profile.similarity_threshold)
+                    .unwrap_or(false);
+
+                if !dominated && !is_duplicate(text, &translated_history, profile.similarity_threshold) {
+                    log::info!("[tick {}] Instant mode — translating: {}",
+                        tick_count, truncate_chars(text, 120));
+                    do_translate(backend, text, source_lang, target_lang, translated_text, &mut translated_history).await;
+                    last_translated_normalized = Some(normalize(text));
+                }
+                continue;
+            }
+
+            // --- Settle mode: wait for consecutive agreements + settle time ---
 
             // Check if this reading agrees with recent readings
             let agrees_with_recent = recent_readings.back()

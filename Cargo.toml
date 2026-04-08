@@ -2,11 +2,11 @@
 name = "eyeclipse"
 version = "0.1.0"
 edition = "2021"
-description = "X11 screen region OCR + translation utility"
+description = "Screen region OCR + translation utility"
 
 [features]
 default = ["tray", "ocr"]
-tray = ["dep:tray-icon", "dep:muda", "dep:gtk", "dep:glib"]
+tray = ["dep:tray-icon", "dep:muda"]
 ocr = ["dep:leptess"]
 
 [dependencies]
@@ -20,10 +20,10 @@ global-hotkey = "0.6"
 leptess = { version = "0.14", optional = true }
 
 # UI
-eframe = { version = "0.29", features = ["x11"] }
+eframe = "0.29"
 egui = "0.29"
 
-# System tray (optional — requires libgtk-3-dev + libappindicator3-dev)
+# System tray (optional)
 tray-icon = { version = "0.19", optional = true }
 muda = { version = "0.15", optional = true }
 
@@ -47,9 +47,10 @@ env_logger = "0.11"
 arboard = "3"
 png = "0.17"
 
-# GTK (required by tray-icon on Linux)
-gtk = { version = "0.18", optional = true }
-glib = { version = "0.20", optional = true }
+# GTK (required by tray-icon on Linux only)
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"
+glib = "0.20"
 
 [dev-dependencies]
 mockito = "1"

@@ -1,28 +1,63 @@
 # Eyeclipse
 
-A lightweight Linux (X11) desktop utility that lets you select a screen region, extract text via OCR, translate it, and display the result in a floating overlay. Supports one-shot and real-time live monitoring modes.
+A lightweight desktop utility that lets you select a screen region, extract text via OCR, translate it, and display the result in a floating overlay. Supports one-shot and real-time live monitoring modes with configurable timing.
+
+## Quick Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/quangtran6767/eyeclipse/main/install-remote.sh | sh
+```
+
+This downloads a prebuilt binary for your platform (Linux x86_64, macOS x86_64, macOS Apple Silicon) or falls back to building from source.
 
 ## Features
 
-- **Global hotkey** (`Super+Shift+S`) — works system-wide, even when minimized
-- **Region selection** — fullscreen dimmed overlay with crosshair and drag-to-select
+- **Global hotkey** (`Super+Shift+S` / `Cmd+Shift+S`) — works system-wide, even when minimized
+- **Region selection** — native region selector (slop on Linux, screencapture on macOS)
 - **OCR** — extracts text from the selected region via Tesseract
 - **Translation** — pluggable API backends: DeepL, LibreTranslate, OpenAI
 - **Result overlay** — floating borderless window near the selection, dismissed with Escape or click outside
 - **System tray** — background icon with right-click menu (toggle mode, quit)
 - **Live mode** — continuously monitors a region for text changes, only re-processes when content changes (pixel diff)
-- **Configurable** — languages, API backend, hotkey, refresh interval via config file
+- **Live timing modes**:
+  - **Instant** — translate as soon as text appears (ideal for pre-rendered subtitles in anime/movies)
+  - **Settle** — wait for text to stabilize before translating (ideal for live speech/typing where text is appended)
+- **Configurable** — languages, API backend, hotkey, refresh interval, timing mode via config file
+- **Cross-platform** — Linux (X11) and macOS
+
+## Platform Support
+
+| Platform | Status |
+|----------|--------|
+| Linux x86_64 (X11) | Full support |
+| macOS x86_64 (Intel) | Supported (requires Screen Recording permission) |
+| macOS aarch64 (Apple Silicon) | Supported (requires Screen Recording permission) |
 
 ## System Requirements
 
-- Linux with X11 display server
+### Linux
+- X11 display server
 - A compositor (Picom, Compton, etc.) for transparency effects
-- Rust toolchain (1.75+)
+- Rust toolchain (1.75+) for building from source
+
+### macOS
+- macOS 12+ recommended
+- Screen Recording permission (System Settings → Privacy & Security)
+- Accessibility permission for global hotkey
 
 ## Installation
 
-### 1. Install system dependencies
+### Option 1: Quick install (prebuilt binary)
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/quangtran6767/eyeclipse/main/install-remote.sh | sh
+```
+
+### Option 2: Build from source
+
+#### 1. Install system dependencies
+
+**Linux (Debian/Ubuntu):**
 ```bash
 sudo apt-get install -y \
   libxdo-dev \
@@ -42,8 +77,13 @@ sudo apt-get install -y \
   libayatana-appindicator3-dev
 ```
 
+**macOS:**
+```bash
+brew install tesseract leptonica
+```
+
 <details>
-<summary>To uninstall these dependencies later</summary>
+<summary>To uninstall Linux dependencies later</summary>
 
 ```bash
 sudo apt-get remove --purge -y \
@@ -68,6 +108,7 @@ sudo apt-get remove --purge -y \
 
 ### 2. Install additional OCR language packs (optional)
 
+**Linux:**
 ```bash
 # Chinese (Simplified)
 sudo apt-get install -y tesseract-ocr-chi-sim
@@ -79,11 +120,14 @@ sudo apt-get install -y tesseract-ocr-kor
 sudo apt-get install -y tesseract-ocr-deu
 ```
 
-### 3. Build
+#### 3. Build
 
 ```bash
-# Full build (all features)
+# Full build — Linux (all features)
 cargo build --release
+
+# Full build — macOS (no tray, OCR only)
+cargo build --release --no-default-features --features ocr
 
 # Minimal build (no tray icon, no OCR — for testing UI only)
 cargo build --release --no-default-features
@@ -97,7 +141,7 @@ cargo build --release --no-default-features --features tray
 
 The binary will be at `target/release/eyeclipse`.
 
-### 4. Install the binary (optional)
+#### 4. Install the binary (optional)
 
 ```bash
 # Copy to a directory on your PATH
@@ -146,6 +190,11 @@ live_interval_ms = 1000
 # Tesseract OCR language(s) — use '+' to combine
 # Common: eng, jpn, chi_sim, kor, deu, fra, spa
 ocr_lang = "jpn+eng"
+
+# Live timing mode: "instant" or "settle"
+# instant = translate immediately (pre-rendered subtitles)
+# settle = wait for text to stabilize (live speech/typing)
+live_timing = "settle"
 ```
 
 ### API Backend Setup
@@ -254,8 +303,8 @@ cargo test
 
 | Feature | Default | Description |
 |---------|---------|-------------|
-| `ocr`   | Yes     | Tesseract OCR support (requires `libtesseract-dev`, `libleptonica-dev`) |
-| `tray`  | Yes     | System tray icon (requires `libgtk-3-dev`, `libayatana-appindicator3-dev`) |
+| `ocr`   | Yes     | Tesseract OCR support (requires `libtesseract-dev`, `libleptonica-dev` on Linux; `brew install tesseract` on macOS) |
+| `tray`  | Yes     | System tray icon (requires `libgtk-3-dev`, `libayatana-appindicator3-dev` on Linux; native on macOS) |
 
 ## Troubleshooting
 
@@ -279,9 +328,17 @@ picom --daemon
 
 ### Hotkey doesn't work
 
-- Make sure no other app is grabbing `Super+Shift+S`
+- Make sure no other app is grabbing `Super+Shift+S` (Linux) or `Cmd+Shift+S` (macOS)
 - The app must be running (check the tray icon)
-- X11 is required — Wayland is not supported
+- Linux: X11 is required — Wayland is not supported
+- macOS: Grant Accessibility permission in System Settings → Privacy & Security
+
+### macOS: "eyeclipse can't be opened" (Gatekeeper)
+
+If downloading a prebuilt binary, macOS may block it. Run:
+```bash
+xattr -d com.apple.quarantine /usr/local/bin/eyeclipse
+```
 
 ### "No API key set" warning
 
