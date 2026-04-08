@@ -10,9 +10,6 @@ tray = ["dep:tray-icon", "dep:muda", "dep:gtk", "dep:glib"]
 ocr = ["dep:leptess"]
 
 [dependencies]
-# X11
-x11rb = { version = "0.13", features = ["allow-unsafe-code", "image", "shm", "xfixes", "render", "composite"] }
-
 # Screen capture
 xcap = "0.0.14"
 
