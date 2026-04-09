@@ -52,7 +52,7 @@ impl LanguageProfile {
     pub fn latin() -> Self {
         Self {
             required_agreements: 2,
-            min_confidence: 50,
+            min_confidence: 65,
             min_settle_ms: 400,
             consecutive_agreement_threshold: 0.90,
             similarity_threshold: 0.80,
@@ -84,16 +84,16 @@ fn normalize(s: &str) -> String {
     s.split_whitespace().collect::<Vec<_>>().join(" ").to_lowercase()
 }
 
-/// Extract the longest substantive line for change detection.
-/// Short OCR noise lines (furigana, artifacts) are ignored so they
-/// don't disrupt settle-time tracking.
-fn extract_primary_line(text: &str, min_text_len: usize) -> String {
+/// Extract all substantive lines joined together for change detection.
+/// Very short lines (< 2 chars) are filtered as noise, but moderately short
+/// lines are kept to handle multi-line subtitles correctly.
+/// The caller checks the total length against min_text_len.
+fn extract_substantive_text(text: &str, _min_text_len: usize) -> String {
     text.lines()
         .map(|l| l.trim())
-        .filter(|l| l.chars().count() >= min_text_len)
-        .max_by_key(|l| l.chars().count())
-        .unwrap_or("")
-        .to_string()
+        .filter(|l| l.chars().count() >= 2)
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 /// Compute similarity ratio between two strings (0.0 = completely different, 1.0 = identical).
@@ -265,8 +265,8 @@ pub async fn start_live_monitor(
 
             let text = &ocr_result.text;
 
-            // Extract primary line for change detection (longest substantive line)
-            let primary = extract_primary_line(text, profile.min_text_len);
+            // Extract substantive text for change detection (all meaningful lines joined)
+            let primary = extract_substantive_text(text, profile.min_text_len);
             if primary.chars().count() < profile.min_text_len {
                 continue;
             }

@@ -99,7 +99,14 @@ fn clean_ocr_output(raw: &str, lang: &str) -> String {
             .trim()
             .to_string()
     } else {
-        kept.join("\n").trim().to_string()
+        // For Latin text, fix common OCR misreads:
+        // '|' is almost always a misread of 'I' in subtitle text
+        kept.join("\n")
+            .replace(" | ", " I ")
+            .replace("| ", "I ")
+            .replace(" |", " I")
+            .trim()
+            .to_string()
     }
 }
 
@@ -170,8 +177,14 @@ fn is_meaningful_latin_line(line: &str) -> bool {
         return false;
     }
 
-    let alpha = chars.iter().filter(|c| c.is_alphabetic()).count();
+    // Reject lines that are mostly non-word symbols (OCR noise fragments)
+    let special_noise: usize = chars.iter().filter(|c| matches!(**c, '~' | '\\' | '@' | '#' | '<' | '>' | '{' | '}' | '=' | '^')).count();
     let total_non_space = chars.iter().filter(|c| !c.is_whitespace()).count();
+    if total_non_space > 0 && special_noise as f64 / total_non_space as f64 > 0.3 {
+        return false;
+    }
+
+    let alpha = chars.iter().filter(|c| c.is_alphabetic()).count();
 
     if total_non_space == 0 {
         return false;

@@ -49,15 +49,6 @@ fn configure_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
-/// Allow dragging the window by its background (no title bar).
-fn enable_drag(ctx: &egui::Context) {
-    // If the user is pressing on empty space (not a widget), start a native drag.
-    let dominated_by_widget = ctx.input(|i| i.pointer.any_click()) && ctx.is_using_pointer();
-    if !dominated_by_widget && ctx.input(|i| i.pointer.any_pressed()) {
-        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
-    }
-}
-
 /// Compute overlay position: below the selection if room, otherwise above.
 fn compute_overlay_position(
     region_x: i32,
@@ -101,7 +92,6 @@ struct OverlayApp {
 
 impl eframe::App for OverlayApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Close on Escape
         if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
             self.should_close = true;
         }
@@ -115,20 +105,10 @@ impl eframe::App for OverlayApp {
             return;
         }
 
-        // Allow dragging by clicking on window background
-        enable_drag(ctx);
-
         egui::CentralPanel::default()
-            .frame(egui::Frame::none().fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 230)).inner_margin(12.0).rounding(8.0))
+            .frame(egui::Frame::none().fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 240)).inner_margin(12.0).rounding(4.0))
             .show(ctx, |ui| {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
-
-                // Drag handle
-                ui.horizontal(|ui| {
-                    ui.label(egui::RichText::new("⠿").color(egui::Color32::GRAY).size(10.0));
-                    ui.label(egui::RichText::new("Eyeclipse").color(egui::Color32::GRAY).size(10.0));
-                });
-                ui.separator();
 
                 // Translated text
                 egui::ScrollArea::vertical()
@@ -150,15 +130,8 @@ impl eframe::App for OverlayApp {
                             let _ = clipboard.set_text(&self.result.translated_text);
                         }
                     }
-                    if ui.button("✕ Close").clicked() {
-                        self.should_close = true;
-                    }
                 });
             });
-    }
-
-    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
-        [0.0, 0.0, 0.0, 0.0] // Transparent
     }
 }
 
@@ -177,9 +150,8 @@ pub fn show_overlay(result: OverlayResult) -> Result<()> {
 
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_decorations(false)
             .with_always_on_top()
-            .with_transparent(true)
+            .with_resizable(true)
             .with_position(egui::pos2(pos_x, pos_y))
             .with_inner_size(egui::vec2(overlay_width, overlay_height))
             .with_min_inner_size(egui::vec2(200.0, 100.0)),
@@ -219,31 +191,34 @@ impl eframe::App for LiveOverlayApp {
             return;
         }
 
-        // Allow dragging by clicking on window background
-        enable_drag(ctx);
+        // Handle native window close (title bar X, Alt+F4, etc.)
+        if ctx.input(|i| i.viewport().close_requested()) {
+            self.stop_signal.store(true, Ordering::SeqCst);
+            return;
+        }
 
         let translated = self.translated_text.lock().unwrap().clone();
 
         egui::CentralPanel::default()
             .frame(
                 egui::Frame::none()
-                    .fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 230))
+                    .fill(egui::Color32::from_rgba_unmultiplied(30, 30, 30, 240))
                     .inner_margin(12.0)
-                    .rounding(8.0),
+                    .rounding(4.0),
             )
             .show(ctx, |ui| {
                 ui.style_mut().visuals.override_text_color = Some(egui::Color32::WHITE);
 
                 ui.horizontal(|ui| {
-                    ui.label(egui::RichText::new("⠿").color(egui::Color32::GRAY).size(10.0));
                     ui.label(
-                        egui::RichText::new("⏺ Live Translation")
+                        egui::RichText::new("⏺ Live")
                             .color(egui::Color32::LIGHT_GREEN)
                             .size(11.0),
                     );
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if ui.button("⏹ Stop").clicked() {
                             self.stop_signal.store(true, Ordering::SeqCst);
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
                     });
                 });
@@ -272,10 +247,6 @@ impl eframe::App for LiveOverlayApp {
         // Poll for updates
         ctx.request_repaint_after(std::time::Duration::from_millis(200));
     }
-
-    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
-        [0.0, 0.0, 0.0, 0.0]
-    }
 }
 
 /// Run the live overlay on the current (main) thread. Blocks until closed.
@@ -301,9 +272,8 @@ pub fn run_live_overlay(
 
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_decorations(false)
             .with_always_on_top()
-            .with_transparent(true)
+            .with_resizable(true)
             .with_position(egui::pos2(pos_x, pos_y))
             .with_inner_size(egui::vec2(overlay_width, overlay_height))
             .with_min_inner_size(egui::vec2(200.0, 100.0)),
